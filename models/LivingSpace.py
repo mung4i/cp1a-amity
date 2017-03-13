@@ -9,7 +9,3 @@ class LivingSpace(Rooms):
 
     def __init__(self, room_name):
         super(LivingSpace, self).__init__(room_name)
-
-
-ls = LivingSpace("Python")
-print ls.room_name
