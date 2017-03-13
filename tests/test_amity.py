@@ -48,3 +48,11 @@ class TestAmity(unittest.TestCase):
         self.amity.add_people("Martin", 'STAFF')
         self.assertIn("Martin", self.amity.people["STAFF"],
                       msg="Person was not added")
+
+    def test_add_person_fellow_to_livingSpace(self):
+        # create a room and add a fellow(s) to it
+        self.amity.create_room(["Go"], "LivingSpace")
+        self.amity.add_people(['Daniel'], 'FELLOW', "Y")
+        self.assertTrue(self.amity.get_roomname("Go"), msg="Room does not exist")
+        self.assertIn("Daniel", self.amity.rooms["LivingSpace"].itervalues(
+        ), msg="Fellow was not allocated a living space")
