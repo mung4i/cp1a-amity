@@ -5,6 +5,10 @@ from Persons import Persons
 
 
 class Staff(Persons):
-    def __init__(self):
-        self.staffNames = []
-        self.staffID = []
+
+    def __init__(self, name):
+        super(Staff, self).__init__(name)
+
+
+sm = Staff("Martin")
+print sm.name
