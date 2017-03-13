@@ -76,3 +76,12 @@ class TestAmity(unittest.TestCase):
 
     def test_print_rooms(self):
         self.assertTrue(self.amity.print_rooms(), msg="Rooms were not printed")
+
+    def test_add_person_staff_to_livingspace(self):
+        self.amity.add_people("Martin", 'STAFF',
+                              wants_space=True)
+        self.assertIn("Martin", self.amity.rooms["LivingSpace"].itervalues(
+        ), msg="Staff not allowed to have living spaces")
+
+    if __name__ == '__main__':
+        unittest.main()
