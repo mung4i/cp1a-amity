@@ -68,3 +68,11 @@ class TestAmity(unittest.TestCase):
         new_numbers = len(self.amity.people["FELLOWS"])
         nth_person = self.amity.people["FELLOWS"][new_numbers - 1]
         self.assertTrue(nth_person.allocated)
+
+    @unittest.skip("WIP ")
+    def test_reallocate_person_successfully(self):
+        # Allocate person and reallocate the same person to another room
+        self.amity.add_people(["Martin"], "FELLOW", "Y")
+
+    def test_print_rooms(self):
+        self.assertTrue(self.amity.print_rooms(), msg="Rooms were not printed")
