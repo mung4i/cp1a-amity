@@ -34,3 +34,8 @@ class TestAmity(unittest.TestCase):
         # Call the get room name function
         self.assertTrue(self.amity.get_roomname('Narnia'),
                         msg="Room does not exist")
+
+    def test_create_room_if_room_name_is_string(self):
+        self.amity.create_room([100], 'Office')
+        self.assertIn(100, self.amity.rooms["Office"],  # logic error
+                      msg="Room name should be a string")
