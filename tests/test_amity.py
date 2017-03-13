@@ -39,3 +39,12 @@ class TestAmity(unittest.TestCase):
         self.amity.create_room([100], 'Office')
         self.assertIn(100, self.amity.rooms["Office"],  # logic error
                       msg="Room name should be a string")
+
+    def test_add_person(self):
+        # Test fellow and staff are added to their respective lists
+        self.amity.add_people("Martin", 'FELLOW', 'Y')
+        self.assertIn("Martin", self.amity.people["FELLOWS"],
+                      msg="Person was not added")
+        self.amity.add_people("Martin", 'STAFF')
+        self.assertIn("Martin", self.amity.people["STAFF"],
+                      msg="Person was not added")
