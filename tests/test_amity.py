@@ -56,3 +56,15 @@ class TestAmity(unittest.TestCase):
         self.assertTrue(self.amity.get_roomname("Go"), msg="Room does not exist")
         self.assertIn("Daniel", self.amity.rooms["LivingSpace"].itervalues(
         ), msg="Fellow was not allocated a living space")
+
+    def test_add_person_confirm_people_added(self):
+        self.amity.add_people(['Daniel'], 'FELLOW', "Y")
+        self.assertIn("Daniel", self.amity.people["FELLOWS"], msg="Person was not added")
+
+    def test_allocate_persons(self):
+        # Confirm people are being allocated
+        old_number_of_persons = len(self.amity.people["FELLOWS"])
+        self.amity.add_people("Martin", "FELLOW", "Y")
+        new_numbers = len(self.amity.people["FELLOWS"])
+        nth_person = self.amity.people["FELLOWS"][new_numbers - 1]
+        self.assertTrue(nth_person.allocated)
