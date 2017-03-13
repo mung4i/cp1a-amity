@@ -27,3 +27,10 @@ class TestAmity(unittest.TestCase):
         self.amity.create_room(["Java", "Java"], 'LivingSpace')
         self.assertEqual(2, self.amity.rooms['LivingSpace'],
                          msg="Cannot create duplicate rooms")
+
+    def test_get_roomname(self):
+        # Create a room called Narnia
+        self.amity.create_room(['Narnia'], 'Office')
+        # Call the get room name function
+        self.assertTrue(self.amity.get_roomname('Narnia'),
+                        msg="Room does not exist")
