@@ -39,13 +39,14 @@ class TestAmity(unittest.TestCase):
         # Create a room called Narnia
         self.amity.create_room(['Narnia'], 'Office')
         # Call the get room name function
-        self.assertTrue(self.amity.get_roomname('Narnia'),
-                        msg="Room does not exist")
+        self.assertIn("Narnia",
+                      self.amity.get_roomname(
+                          list(self.amity.rooms["Office"].keys())))
 
     def test_create_room_if_room_name_is_string(self):
         self.amity.create_room([100], 'Office')
-        self.assertIn(100, self.amity.rooms["Office"],  # logic error
-                      msg="Room name should be a string")
+        output = sys.stdout.getvalue().strip()
+        self.assertIn(output, "Room name should be a string")
 
     def test_add_person(self):
         # Test fellow and staff are added to their respective lists
