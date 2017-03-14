@@ -1,4 +1,6 @@
 import unittest
+import sys
+from StringIO import StringIO
 from cp1a.models.Amity import Amity
 from cp1a.models.Fellow import Fellow
 
@@ -9,24 +11,29 @@ class TestAmity(unittest.TestCase):
         """instance of amity created to pass class variables
         in Amity to test cases"""
         self.amity = Amity()
+        self.held, sys.stdout = sys.stdout, StringIO()
 
-        for i in ["Martin", "asdas", "asdgfdg"]:
+        for i in ["Martin", "Daniel", "Larry"]:
             self.new_fellow = Fellow(i)
             self.amity.people["FELLOWS"].append(self.new_fellow)
 
     def test_create_room_and_add_room_successfully(self):
         # function tests if the create room method is adding rooms to lists
         # Create rooms which can offices or living spaces
-        self.amity.create_room(["Java", "Python"], 'LivingSpace')
-        self.assertIn("Java", self.amity.rooms['LivingSpace'],
-                      msg="Rooms were not created")
+        self.amity.create_room(["Hogwarts", "Krypton"], "Office")
+        self.assertIn("Hogwarts", self.amity.get_roomname(
+            list(self.amity.rooms["Office"].keys())))
 
     def test_create_room_cannot_create_duplicate(self):
         # function tests if the create room method will accepted
         # chained duplicate names
-        self.amity.create_room(["Java", "Java"], 'LivingSpace')
-        self.assertEqual(2, self.amity.rooms['LivingSpace'],
-                         msg="Cannot create duplicate rooms")
+        target = "Java"
+        self.amity.create_room([target], "LivingSpace")
+        self.assertIn(target, self.amity.get_roomname(
+            list(self.amity.rooms["LivingSpace"].keys())))
+        self.amity.create_room([target], "LivingSpace")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "Cannot create duplicate rooms")
 
     def test_get_roomname(self):
         # Create a room called Narnia
@@ -53,13 +60,15 @@ class TestAmity(unittest.TestCase):
         # create a room and add a fellow(s) to it
         self.amity.create_room(["Go"], "LivingSpace")
         self.amity.add_people(['Daniel'], 'FELLOW', "Y")
-        self.assertTrue(self.amity.get_roomname("Go"), msg="Room does not exist")
+        self.assertTrue(self.amity.get_roomname("Go"),
+                        msg="Room does not exist")
         self.assertIn("Daniel", self.amity.rooms["LivingSpace"].itervalues(
         ), msg="Fellow was not allocated a living space")
 
     def test_add_person_confirm_people_added(self):
         self.amity.add_people(['Daniel'], 'FELLOW', "Y")
-        self.assertIn("Daniel", self.amity.people["FELLOWS"], msg="Person was not added")
+        self.assertIn("Daniel", self.amity.people["FELLOWS"],
+                      msg="Person was not added")
 
     def test_allocate_persons(self):
         # Confirm people are being allocated
