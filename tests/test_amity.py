@@ -12,7 +12,7 @@ class TestAmity(unittest.TestCase):
         in Amity to test cases"""
         self.amity = Amity()
         self.held, sys.stdout = sys.stdout, StringIO()
-
+        self.amity.create_room(["Java"], "LivingSpace")
         for i in ["Martin", "Daniel", "Larry"]:
             self.new_fellow = Fellow(i)
             self.amity.people["FELLOWS"].append(self.new_fellow)
@@ -51,25 +51,16 @@ class TestAmity(unittest.TestCase):
     def test_add_person(self):
         # Test fellow and staff are added to their respective lists
         self.amity.add_people("Martin", 'FELLOW', 'Y')
-        self.assertIn("Martin", self.amity.people["FELLOWS"],
-                      msg="Person was not added")
-        self.amity.add_people("Martin", 'STAFF')
-        self.assertIn("Martin", self.amity.people["STAFF"],
-                      msg="Person was not added")
+        self.assertIn("Martin", self.amity.get_personname())
+        self.amity.add_people("Martin", 'STAFF', 'N')
+        self.assertIn("Martin", self.amity.get_personname())
 
     def test_add_person_fellow_to_livingSpace(self):
         # create a room and add a fellow(s) to it
         self.amity.create_room(["Go"], "LivingSpace")
-        self.amity.add_people(['Daniel'], 'FELLOW', "Y")
-        self.assertTrue(self.amity.get_roomname("Go"),
-                        msg="Room does not exist")
-        self.assertIn("Daniel", self.amity.rooms["LivingSpace"].itervalues(
-        ), msg="Fellow was not allocated a living space")
-
-    def test_add_person_confirm_people_added(self):
-        self.amity.add_people(['Daniel'], 'FELLOW', "Y")
-        self.assertIn("Daniel", self.amity.people["FELLOWS"],
-                      msg="Person was not added")
+        person_name = 'Daniel'
+        self.amity.add_people([person_name], 'FELLOW', "Y")
+        self.assertIn(["Daniel"], self.amity.return_people_allocated())
 
     def test_allocate_persons(self):
         # Confirm people are being allocated

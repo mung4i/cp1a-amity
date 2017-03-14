@@ -1,8 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import random
 from Office import Office
 from LivingSpace import LivingSpace
+from Fellow import Fellow
+from Staff import Staff
 
 
 class Amity(object):
@@ -42,13 +45,41 @@ class Amity(object):
         return all_room_names
 
     def add_people(self, person_name, person_type, wants_space):
-        pass
+        if person_type == "FELLOW":
+            fellow = Fellow(person_name)
+            self.people["FELLOWS"].append(fellow)
+            if wants_space == "Y":
+                allocated = random.choice(self.get_listofrooms())
+                self.rooms["LivingSpace"][allocated].append(fellow)
+        elif person_type == "STAFF":
+            staff = Staff(person_name)
+            self.people["STAFF"].append(staff)
 
-    def allocate_person(self):
-        pass
+    def get_personname(self):
+        all_people = []
+        for person in self.people["FELLOWS"]:
+            all_people.append(person.name)
+        return all_people
 
-    def return_room_allocated(self, room_name):
-        pass
+    def get_listofrooms(self):
+        all_rooms = []
+        #
+        # for room in list(self.rooms["Office"].keys()):
+        #     all_rooms.append(room.room_name)
+        for room in list(self.rooms["LivingSpace"].keys()):
+            if len(self.rooms["LivingSpace"][room]) < 4:
+                all_rooms.append(room)
+        return all_rooms
+
+    def return_people_allocated(self):
+        list_of_allocated = []
+        for room in list(self.rooms["LivingSpace"].keys()):
+            if len(self.rooms["LivingSpace"][room]) > 0:
+                list_of_allocated.extend(self.rooms["LivingSpace"][room])
+                for item in list_of_allocated:
+                    peoples = []
+                    peoples.append(item.name)
+        return peoples
 
     def reallocatePerson(self, person_name, room_name):
         pass
@@ -67,3 +98,12 @@ class Amity(object):
 
     def load_state(self, ):
         pass
+
+#
+# amity = Amity()
+# amity.create_room(["Java"], "LivingSpace")
+# # amity.add_people("Martin Mungai", "FELLOW", "Y")
+# # print amity.return_people_allocated()
+# # print amity.get_personname()
+# # amity.create_room(["Hogwarts"], "Office")
+# # print amity.get_listofrooms()[0].room_name
