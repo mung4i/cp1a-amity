@@ -33,7 +33,7 @@ class TestAmity(unittest.TestCase):
             list(self.amity.rooms["LivingSpace"].keys())))
         self.amity.create_room([target], "LivingSpace")
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "Cannot create duplicate rooms")
+        self.assertIn("Cannot create duplicate rooms", output)
 
     def test_get_roomname(self):
         # Create a room called Narnia
@@ -46,7 +46,7 @@ class TestAmity(unittest.TestCase):
     def test_create_room_if_room_name_is_string(self):
         self.amity.create_room([100], 'Office')
         output = sys.stdout.getvalue().strip()
-        self.assertIn(output, "Room name should be a string")
+        self.assertIn("Room name should be a string", output)
 
     def test_add_person(self):
         # Test fellow and staff are added to their respective lists
@@ -62,13 +62,15 @@ class TestAmity(unittest.TestCase):
         self.amity.add_people([person_name], 'FELLOW', "Y")
         self.assertIn(["Daniel"], self.amity.return_people_allocated())
 
+    def test_add_person_staff_to_livingspace(self):
+        self.amity.add_people("Martin", 'STAFF', "Y")
+        output = sys.stdout.getvalue().strip()
+        self.assertIn("Staff not allowed to have living spaces", output)
+
     def test_allocate_persons(self):
         # Confirm people are being allocated
-        old_number_of_persons = len(self.amity.people["FELLOWS"])
         self.amity.add_people("Martin", "FELLOW", "Y")
-        new_numbers = len(self.amity.people["FELLOWS"])
-        nth_person = self.amity.people["FELLOWS"][new_numbers - 1]
-        self.assertTrue(nth_person.allocated)
+        self.assertIn("Martin", self.amity.return_people_allocated())
 
     @unittest.skip("WIP")
     def test_reallocate_person_successfully(self):
@@ -77,12 +79,6 @@ class TestAmity(unittest.TestCase):
 
     def test_print_rooms(self):
         self.assertTrue(self.amity.print_rooms(), msg="Rooms were not printed")
-
-    def test_add_person_staff_to_livingspace(self):
-        self.amity.add_people("Martin", 'STAFF',
-                              wants_space=True)
-        self.assertIn("Martin", self.amity.rooms["LivingSpace"].itervalues(
-        ), msg="Staff not allowed to have living spaces")
 
     if __name__ == '__main__':
         unittest.main()
