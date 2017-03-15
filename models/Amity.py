@@ -140,8 +140,3 @@ class Amity(object):
 
     def load_state(self, ):
         pass
-
-amity = Amity()
-amity.create_room(["Java", "Python", "Scala", "Go", "Ruby", "Haskell"], "LivingSpace")
-amity.add_people("Martin Mungai", "FELLOW", "Y")
-amity.print_allocations()
