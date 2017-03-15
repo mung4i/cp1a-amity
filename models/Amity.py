@@ -37,11 +37,9 @@ class Amity(object):
                     print "Room {0} successfuly created".format(livingspace.room_name)
             if room_type == "Office":
                 for ospacename in room_names_list:
-
-                    else:
-                        office = Office(ospacename)
-                        self.rooms["Office"][office] = []
-                        print "Room {0} successfuly created".format(office.room_name)
+                    office = Office(ospacename)
+                    self.rooms["Office"][office] = []
+                    print "Room {0} successfuly created".format(office.room_name)
 
     def get_roomname(self, rooms):
         all_room_names = []
