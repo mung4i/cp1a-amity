@@ -24,22 +24,26 @@ class Amity(object):
             if not type(room) == str:
                 print "Room name should be a string"
                 break
-            if room in self.get_roomname(list(self.rooms["LivingSpace"].keys())):
+            if room in self.get_roomname(
+                    list(self.rooms["LivingSpace"].keys())):
                 print "Cannot create duplicate rooms"
                 break
-            if room in self.get_roomname(list(self.rooms["Office"].keys())):
+            if room in self.get_roomname(
+                    list(self.rooms["Office"].keys())):
                 print "Cannot create duplicate rooms"
                 break
             if room_type == "LivingSpace":
                 for lspacename in room_names_list:
                     livingspace = LivingSpace(lspacename)
                     self.rooms["LivingSpace"][livingspace] = []
-                    print "Room {0} successfuly created".format(livingspace.room_name)
+                    print "Room {0} successfuly created".format(
+                        livingspace.room_name)
             if room_type == "Office":
                 for ospacename in room_names_list:
                     office = Office(ospacename)
                     self.rooms["Office"][office] = []
-                    print "Room {0} successfuly created".format(office.room_name)
+                    print "Room {0} successfuly created".format(
+                        office.room_name)
 
     def get_roomname(self, rooms):
         all_room_names = []
@@ -102,7 +106,8 @@ class Amity(object):
         if person_object in self.rooms["LivingSpace"][room_object]:
             self.rooms["LivingSpace"][room_object].remove(person_object)
         else:
-            return "{0} not in {1}".format(person_object.name, room_object.room_name)
+            return "{0} not in {1}".format(
+                person_object.name, room_object.room_name)
 
     def reallocatePerson(self, person_name, person_type, wants_space="Y"):
         if person_type == "FELLOW":
@@ -115,7 +120,11 @@ class Amity(object):
                 print "successfuly reallocated"
 
     def print_rooms(self):
-        pass
+        room_names_list = []
+        rooms = self.get_listofrooms()
+        for room in rooms:
+            room_names_list.append(room.room_name)
+        return room_names_list
 
     def print_allocations(self, ):
         pass
