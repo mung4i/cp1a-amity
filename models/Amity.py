@@ -20,23 +20,28 @@ class Amity(object):
     }
 
     def create_room(self, room_names_list, room_type):
-        if room_type == "LivingSpace":
-            for lspacename in room_names_list:
-                if lspacename in self.get_roomname(list(self.rooms["LivingSpace"].keys())):
-                    print "Cannot create duplicate rooms"
-                    break
-                else:
-                    livingspace = LivingSpace(lspacename)
-                    self.rooms["LivingSpace"][livingspace] = []
-        if room_type == "Office":
-            for ospacename in room_names_list:
-                if ospacename in self.get_roomname(list(self.rooms["Office"].keys())):
-                    print "Cannot create duplicate rooms"
-                    break
-                else:
-                    office = Office(ospacename)
-                    self.rooms["Office"][office] = []
-                    print "Room {0} successfuly created".format(office.room_name)
+        for room in room_names_list:
+            if type(room) == str:
+                if room_type == "LivingSpace":
+                    for lspacename in room_names_list:
+                        if lspacename in self.get_roomname(list(self.rooms["LivingSpace"].keys())):
+                            print "Cannot create duplicate rooms"
+                            break
+                        else:
+                            livingspace = LivingSpace(lspacename)
+                            self.rooms["LivingSpace"][livingspace] = []
+                if room_type == "Office":
+                    for ospacename in room_names_list:
+                        if ospacename in self.get_roomname(list(self.rooms["Office"].keys())):
+                            print "Cannot create duplicate rooms"
+                            break
+                        else:
+                            office = Office(ospacename)
+                            self.rooms["Office"][office] = []
+                            print "Room {0} successfuly created".format(office.room_name)
+            else:
+                print "Room name should be a string"
+                break
 
     def get_roomname(self, rooms):
         all_room_names = []
@@ -51,9 +56,12 @@ class Amity(object):
             if wants_space == "Y":
                 allocated = random.choice(self.get_listofrooms())
                 self.rooms["LivingSpace"][allocated].append(fellow)
+
         elif person_type == "STAFF":
             staff = Staff(person_name)
             self.people["STAFF"].append(staff)
+            if wants_space == "Y":
+                print "Staff not allowed to have living spaces"
 
     def get_personname(self):
         all_people = []
