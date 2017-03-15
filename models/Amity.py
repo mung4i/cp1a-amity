@@ -96,7 +96,7 @@ class Amity(object):
         for room in list(self.rooms["LivingSpace"].keys()):
             if person_object in self.rooms["LivingSpace"][room]:
                 room_object.append(room)
-        return room_object, room
+                return room_object, room
 
     def deallocate_fellow(self, person_object, room_object):
         if person_object in self.rooms["LivingSpace"][room_object]:
