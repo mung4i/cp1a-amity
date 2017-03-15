@@ -2,7 +2,6 @@ import unittest
 import sys
 from StringIO import StringIO
 from cp1a.models.Amity import Amity
-from cp1a.models.Fellow import Fellow
 
 
 class TestAmity(unittest.TestCase):
@@ -13,9 +12,9 @@ class TestAmity(unittest.TestCase):
         self.amity = Amity()
         self.held, sys.stdout = sys.stdout, StringIO()
         self.amity.create_room(["Java"], "LivingSpace")
-        for i in ["Martin", "Daniel", "Larry"]:
-            self.new_fellow = Fellow(i)
-            self.amity.people["FELLOWS"].append(self.new_fellow)
+        # for i in ["Martin", "Daniel", "Larry"]:
+        #     self.new_fellow = Fellow(i)
+        #     self.amity.people["FELLOWS"].append(self.new_fellow)
 
     def test_create_room_and_add_room_successfully(self):
         # function tests if the create room method is adding rooms to lists
@@ -60,7 +59,7 @@ class TestAmity(unittest.TestCase):
         self.amity.create_room(["Go"], "LivingSpace")
         person_name = 'Daniel'
         self.amity.add_people([person_name], 'FELLOW', "Y")
-        self.assertIn(["Daniel"], self.amity.return_people_allocated())
+        self.assertIn(["Daniel"], self.amity.return_people_allocated()[1])
 
     def test_add_person_staff_to_livingspace(self):
         self.amity.add_people("Martin", 'STAFF', "Y")
@@ -70,12 +69,13 @@ class TestAmity(unittest.TestCase):
     def test_allocate_persons(self):
         # Confirm people are being allocated
         self.amity.add_people("Martin", "FELLOW", "Y")
-        self.assertIn("Martin", self.amity.return_people_allocated())
+        self.assertIn("Martin", self.amity.return_people_allocated()[1])
 
-    @unittest.skip("WIP")
     def test_reallocate_person_successfully(self):
         # Allocate person and reallocate the same person to another room
-        self.amity.add_people(["Martin"], "FELLOW", "Y")
+        self.amity.create_room(["Python"], "LivingSpace")
+        self.amity.add_people("Martin", "FELLOW", "Y")
+        self.assertIn("Martin", self.amity.return_people_allocated()[1])
 
     def test_print_rooms(self):
         self.assertTrue(self.amity.print_rooms(), msg="Rooms were not printed")
