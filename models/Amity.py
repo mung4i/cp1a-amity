@@ -126,8 +126,11 @@ class Amity(object):
             room_names_list.append(room.room_name)
         return room_names_list
 
-    def print_allocations(self, ):
-        pass
+    def print_allocations(self):
+        for person in self.people:
+            person_obj = self.get_personobject(person)
+            room_obj = self.return_room_allocated(person_obj)[1].room_name
+        print (person_obj.name, room_obj)
 
     def print_unallocated(self, ):
         pass
@@ -137,3 +140,8 @@ class Amity(object):
 
     def load_state(self, ):
         pass
+
+amity = Amity()
+amity.create_room(["Java", "Python", "Scala", "Go", "Ruby", "Haskell"], "LivingSpace")
+amity.add_people("Martin Mungai", "FELLOW", "Y")
+amity.print_allocations()
