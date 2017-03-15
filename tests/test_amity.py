@@ -78,7 +78,8 @@ class TestAmity(unittest.TestCase):
         self.assertIn("Martin", self.amity.return_people_allocated()[1])
 
     def test_print_rooms(self):
-        self.assertTrue(self.amity.print_rooms(), msg="Rooms were not printed")
+        self.amity.create_room(["Python"], "LivingSpace")
+        self.assertIn("Python", self.amity.print_rooms())
 
     if __name__ == '__main__':
         unittest.main()
