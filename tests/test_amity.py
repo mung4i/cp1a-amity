@@ -1,7 +1,7 @@
 import unittest
 import sys
 from StringIO import StringIO
-from ..models.Amity import Amity
+from . models.Amity import Amity
 
 
 class TestAmity(unittest.TestCase):
