@@ -21,16 +21,14 @@ class TestAmity(unittest.TestCase):
         # Create rooms which can offices or living spaces
         self.amity.create_room(["Hogwarts", "Krypton"], "Office")
         self.assertIn("Hogwarts", self.amity.get_roomname(
-            self.amity.rooms))
+            self.amity.rooms["Office"]))
 
     def test_create_room_cannot_create_duplicate(self):
         # function tests if the create room method will accepted
         # chained duplicate names
-        target = "Java"
-        self.amity.create_room([target], "LivingSpace")
-        self.assertIn(target, self.amity.get_roomname(
-            list(self.amity.rooms["LivingSpace"].keys())))
-        self.amity.create_room([target], "LivingSpace")
+        self.amity.create_room("Java", "LivingSpace")
+        self.assertIn("Java", self.amity.get_roomname(self.amity.rooms["LivingSpace"]))
+        self.amity.create_room(["Java"], "LivingSpace")
         output = sys.stdout.getvalue().strip()
         self.assertIn("Cannot create duplicate rooms", output)
 
@@ -38,9 +36,7 @@ class TestAmity(unittest.TestCase):
         # Create a room called Narnia
         self.amity.create_room(['Narnia'], 'Office')
         # Call the get room name function
-        self.assertIn("Narnia",
-                      self.amity.get_roomname(
-                          list(self.amity.rooms["Office"].keys())))
+        self.assertIn("Narnia", self.amity.get_roomname(self.amity.rooms["Office"]))
 
     def test_create_room_if_room_name_is_string(self):
         self.amity.create_room([100], 'Office')
@@ -77,7 +73,10 @@ class TestAmity(unittest.TestCase):
         # Allocate person and reallocate the same person to another room
         self.amity.create_room(["Python"], "LivingSpace")
         self.amity.add_people("Martin", "FELLOW", "Y")
-        self.assertIn("Martin", self.amity.return_people_allocated()[1])
+        result = self.amity.get_fellowobject("Martin")
+        results = self.amity.get_livingspaceobject("Python")
+        self.amity.reallocatePerson("Martin", "FELLOW", "Y")
+        self.assertIn("Martin", self.amity.return_people_allocated("Martin"))
 
     def test_print_rooms(self):
         self.amity.create_room(["Python"], "LivingSpace")
