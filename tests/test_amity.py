@@ -21,7 +21,7 @@ class TestAmity(unittest.TestCase):
         # Create rooms which can offices or living spaces
         self.amity.create_room(["Hogwarts", "Krypton"], "Office")
         self.assertIn("Hogwarts", self.amity.get_roomname(
-            list(self.amity.rooms["Office"].keys())))
+            self.amity.rooms))
 
     def test_create_room_cannot_create_duplicate(self):
         # function tests if the create room method will accepted
@@ -50,16 +50,18 @@ class TestAmity(unittest.TestCase):
     def test_add_person(self):
         # Test fellow and staff are added to their respective lists
         self.amity.add_people("Martin", 'FELLOW', 'Y')
-        self.assertIn("Martin", self.amity.get_personname())
-        self.amity.add_people("Martin", 'STAFF', 'N')
-        self.assertIn("Martin", self.amity.get_personname())
+        result = self.amity.get_fellowobject("Martin")
+        self.assertEqual("Martin", result.name)
+        self.amity.add_people("Martin Mungai", 'STAFF', 'N')
+        result2 = self.amity.get_staffobject("Martin Mungai")
+        self.assertEqual("Martin Mungai", result2.name)
 
     def test_add_person_fellow_to_livingSpace(self):
         # create a room and add a fellow(s) to it
         self.amity.create_room(["Go"], "LivingSpace")
-        person_name = 'Daniel'
-        self.amity.add_people([person_name], 'FELLOW', "Y")
-        self.assertIn(["Daniel"], self.amity.return_people_allocated()[1])
+        self.amity.add_people("Daniel", 'FELLOW', "Y")
+        result = self.amity.get_fellowobject("Daniel")
+        self.assertIn(result, self.amity.allocated)
 
     def test_add_person_staff_to_livingspace(self):
         self.amity.add_people("Martin", 'STAFF', "Y")
@@ -69,7 +71,7 @@ class TestAmity(unittest.TestCase):
     def test_allocate_persons(self):
         # Confirm people are being allocated
         self.amity.add_people("Martin", "FELLOW", "Y")
-        self.assertIn("Martin", self.amity.return_people_allocated()[1])
+        self.assertIn("Martin is allocated", self.amity.return_people_allocated("Martin"))
 
     def test_reallocate_person_successfully(self):
         # Allocate person and reallocate the same person to another room
