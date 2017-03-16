@@ -88,6 +88,11 @@ class Amity(object):
         # print all_rooms
         return all_rooms
 
+    def get_livingspaceobject(self, room_name):
+        for room in self.rooms["LivingSpace"]:
+            if room.room_name == room_name:
+                return room
+
     def return_people_allocated(self, person_name):
         for person in self.allocated:
             result = self.get_fellowobject(person_name)
@@ -103,8 +108,8 @@ class Amity(object):
                 return "Person not allocated, check in unallocated lists"
 
     def deallocate_fellow(self, person_object, room_object):
-        if person_object in self.rooms["LivingSpace"][room_object]:
-            self.rooms["LivingSpace"][room_object].remove(person_object)
+        if room_object in self.rooms["LivingSpace"]:
+            room_object.occupants.remove(person_object)
         else:
             return "{0} not in {1}".format(
                 person_object.name, room_object.room_name)
@@ -112,11 +117,11 @@ class Amity(object):
     def reallocatePerson(self, person_name, person_type, wants_space="Y"):
         if person_type == "FELLOW":
             target = self.get_fellowobject(person_name)
-            assigned = self.return_room_allocated(target)[1]
+            assigned = self.return_room_allocated(target)
             self.deallocate_fellow(target, assigned)
             if wants_space == "Y":
                 allocated = random.choice(self.get_listofrooms())
-                self.rooms["LivingSpace"][allocated].append(target)
+                allocated.occupants.append(target)
                 print "successfuly reallocated"
 
     def print_rooms(self):
@@ -141,3 +146,8 @@ class Amity(object):
 
     def load_state(self, ):
         pass
+
+
+amity = Amity()
+amity.create_room(["Java"], "LivingSpace")
+print amity.get_livingspaceobject("Java")
