@@ -75,12 +75,13 @@ class TestAmity(unittest.TestCase):
         # Allocate person and reallocate the same person to another room
         self.amity.create_room(["Python"], "LivingSpace")
         self.amity.add_people("Martin", "FELLOW", "Y")
-        self.amity.reallocatePerson("Martin", "FELLOW", "Y")
+        self.amity.reallocatePerson("Martin", "FELLOW", "Java")
         self.assertIn("Martin", self.amity.return_people_allocated().name)
 
     def test_print_rooms(self):
         self.amity.create_room(["Python"], "LivingSpace")
         self.assertIn("Python", self.amity.print_rooms())
 
-    if __name__ == '__main__':
-        unittest.main()
+
+if __name__ == '__main__':
+    unittest.main(exit=False)
