@@ -171,6 +171,9 @@ class Amity(object):
     def print_unallocated(self):
         for person in self.unallocated_persons:
             print (person.name)
+            file = open("unallocated.txt", "w")
+            file.write(person.name + " " + "FELLOW" + " " + "Y")
+            file.close()
 
     def print_room(self, room_name):
         members = []
@@ -211,7 +214,9 @@ class Amity(object):
 
 
 amity = Amity()
-amity.create_room(["Java", "Go", "Scala", "Python"], "LivingSpace")
+amity.create_room(["Java"], "LivingSpace")
 amity.load_people()
+amity.add_people("Martin Mungai", "FELLOW", "Y")
 amity.print_allocations()
+amity.print_unallocated()
 amity.print_room("Python")
