@@ -211,12 +211,3 @@ class Amity(object):
 
     def load_state(self):
         pass
-
-
-amity = Amity()
-amity.create_room(["Java"], "LivingSpace")
-amity.load_people()
-amity.add_people("Martin Mungai", "FELLOW", "Y")
-amity.print_allocations()
-amity.print_unallocated()
-amity.print_room("Python")
