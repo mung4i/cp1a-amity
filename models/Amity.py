@@ -63,8 +63,9 @@ class Amity(object):
         if person_type == "FELLOW" and wants_space == "Y":
             if type(person_name) == str:
                 try:
-                    if len(self.get_listofrooms()) > 0:
+                    if len(self.get_listofrooms()) != 0:
                         fellow = Fellow(person_name)
+                        # print fellow
                         self.people["FELLOWS"].append(fellow)
                         allocated = random.choice(self.get_listofrooms())
                         # print allocated.room_name
@@ -72,7 +73,10 @@ class Amity(object):
                         allocated.occupants.append(fellow)
                         self.allocated_persons.append([fellow, allocated])
                     else:
-                        return "No rooms to be added, Please create a room"
+                        fellow = Fellow(person_name)
+                        # print fellow
+                        self.unallocated_persons.append(fellow)
+                        return "No rooms to add people to, Please create a room"
                 except IndexError:
                     self.unallocated_persons.append(person_name)
                     return "Extra person not allocated added to unallocated"
@@ -165,11 +169,8 @@ class Amity(object):
             print "Fellows have not been allocated yet, Please add a fellow"
 
     def print_unallocated(self):
-        if len(self.people["STAFF"]) > 0:
-            for person in self.people["STAFF"]:
-                print (person.name)
-        else:
-            print "No staff members have been added yet :)"
+        for person in self.unallocated_persons:
+            print (person.name)
 
     def load_people(self):
         r = open("txtfile.txt", "r")
