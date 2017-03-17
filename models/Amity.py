@@ -147,7 +147,7 @@ class Amity(object):
             new_room = self.get_roomobject(room_name)
             new_room.occupants.append(target)
             self.allocated_persons.append([target, new_room])
-            print "{0} was successfuly reallocated to {1}".format(
+            print "{0} was reallocated to {1}".format(
                 target.name, new_room.room_name)
 
     def print_rooms(self):
@@ -172,6 +172,23 @@ class Amity(object):
         for person in self.unallocated_persons:
             print (person.name)
 
+    def print_room(self, room_name):
+        members = []
+        obj = self.get_roomobject(room_name)
+        if obj in self.rooms["LivingSpace"]:
+            member = obj.occupants
+            members.append(member)
+        elif obj in self.rooms["Office"]:
+            memberz = obj.occupants
+            members.append(memberz)
+        for member in members:
+            if member:
+                print "{0} has the following members".format(room_name)
+                for memberz in member:
+                    print "{0}".format(memberz.name)
+            else:
+                print "empty"
+
     def load_people(self):
         r = open("txtfile.txt", "r")
         next = r.read().splitlines()
@@ -191,3 +208,10 @@ class Amity(object):
 
     def load_state(self):
         pass
+
+
+amity = Amity()
+amity.create_room(["Java", "Go", "Scala", "Python"], "LivingSpace")
+amity.load_people()
+amity.print_allocations()
+amity.print_room("Python")
