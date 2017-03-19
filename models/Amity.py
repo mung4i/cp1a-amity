@@ -72,6 +72,7 @@ class Amity(object):
                         self.allocated_persons.append([fellow, allocated])
                     else:
                         fellow = Fellow(person_name)
+                        fellow.allocated = False
                         self.unallocated_persons.append(fellow)
                         return "No rooms to add people to please create a room"
                 except IndexError:
@@ -203,3 +204,15 @@ class Amity(object):
             elif len(words) <= 3:
                 self.add_people(name, person_type, wants_space="N")
         return "People loaded successfully"
+
+
+amity = Amity()
+amity.create_room(["Java"], "LivingSpace")
+amity.load_people()
+amity.add_people("Martin Mungai", "FELLOW", "Y")
+amity.add_people("Daniel Wangai", "FELLOW", "Y")
+amity.add_people("Larry Wachira", "FELLOW", "Y")
+amity.add_people("Eugene Liyai", "FELLOW", "Y")
+amity.add_people("Cynthia Abura", "FELLOW", "Y")
+amity.add_people("Shem Ogumbe", "STAFF", "Y")
+amity.print_unallocated()
