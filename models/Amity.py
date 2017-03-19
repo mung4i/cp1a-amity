@@ -209,7 +209,3 @@ class Amity(object):
 
     def load_state(self):
         pass
-
-
-amity = Amity()
-amity.print_unallocated()
