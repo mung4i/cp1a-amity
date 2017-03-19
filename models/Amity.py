@@ -65,16 +65,13 @@ class Amity(object):
                 try:
                     if len(self.get_listofrooms()) != 0:
                         fellow = Fellow(person_name)
-                        # print fellow
                         self.people["FELLOWS"].append(fellow)
                         allocated = random.choice(self.get_listofrooms())
-                        # print allocated.room_name
                         fellow.allocated = True
                         allocated.occupants.append(fellow)
                         self.allocated_persons.append([fellow, allocated])
                     else:
                         fellow = Fellow(person_name)
-                        # print fellow
                         self.unallocated_persons.append(fellow)
                         return "No rooms to add people to, Please create a room"
                 except IndexError:
@@ -169,11 +166,12 @@ class Amity(object):
             print "Fellows have not been allocated yet, Please add a fellow"
 
     def print_unallocated(self):
+        open("unallocated.txt", "w").close()
         for person in self.unallocated_persons:
             print (person.name)
-            file = open("unallocated.txt", "w")
-            file.write(person.name + " " + "FELLOW" + " " + "Y")
-            file.close()
+            with open("unallocated.txt", "a") as myfile:
+                myfile.write(person.name + " " + "FELLOW" + " " + "Y" + '\n')
+                myfile.close()
 
     def print_room(self, room_name):
         members = []
@@ -211,3 +209,7 @@ class Amity(object):
 
     def load_state(self):
         pass
+
+
+amity = Amity()
+amity.print_unallocated()
