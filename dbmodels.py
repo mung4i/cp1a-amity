@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
@@ -7,21 +8,21 @@ Base = declarative_base()
 
 class Offices(Base):
     __tablename__ = "Offices"
-    office_id = Column(Integer(25), primary_key=True)
-    office_name = Column(String(25))
-    room_capacity = Column(Integer(5))
+    office_id = Column(Integer)
+    office_name = Column(String(25), primary_key=True)
+    room_capacity = Column(Integer)
 
 
 class LivingSpaces(Base):
     __tablename__ = "LivingSpaces"
-    livingspace_id = Column(Integer(25), primary_key=True)
+    livingspace_id = Column(Integer, primary_key=True)
     livingspace_name = Column(String(25))
-    room_capacity = Column(Integer(5))
+    room_capacity = Column(Integer)
 
 
 class Fellows(Base):
     __tablename__ = "Fellows"
-    fellow_id = Column(Integer(25), primary_key=True)
+    fellow_id = Column(Integer, primary_key=True)
     fellow_name = Column(String(25))
     person_type = Column(String(25))
     wants_space = Column(String(5))
@@ -29,7 +30,7 @@ class Fellows(Base):
 
 class Staff(Base):
     __tablename__ = "Staff"
-    staff_id = Column(Integer(25), primary_key=True)
+    staff_id = Column(Integer, primary_key=True)
     staff_name = Column(String(25))
     person_type = Column(String(25))
 
