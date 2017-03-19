@@ -73,7 +73,7 @@ class Amity(object):
                     else:
                         fellow = Fellow(person_name)
                         self.unallocated_persons.append(fellow)
-                        return "No rooms to add people to, Please create a room"
+                        return "No rooms to add people to please create a room"
                 except IndexError:
                     self.unallocated_persons.append(person_name)
                     return "Extra person not allocated added to unallocated"
@@ -203,9 +203,3 @@ class Amity(object):
             elif len(words) <= 3:
                 self.add_people(name, person_type, wants_space="N")
         return "People loaded successfully"
-
-    def save_state(self):
-        pass
-
-    def load_state(self):
-        pass
