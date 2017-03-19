@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models.amity import Amity
-from models import Offices, LivingSpaces, Fellows, Staff, Allocated, \
+from models.Amity import Amity
+from dbmodels import Offices, LivingSpaces, Fellows, Staff, Allocated,\
     Unallocated
 
 
@@ -32,7 +32,7 @@ class Sessions(object):
 
     def populate_livingspaces(self):
         for room in Amity.rooms["LivingSpaces"]:
-            room_object = self.session.query(Offices).filter_by(
+            room_object = self.session.query(LivingSpaces).filter_by(
                 livingspace_name=room.room_name).first()
 
             if room_object is None:
