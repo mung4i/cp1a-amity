@@ -3,10 +3,8 @@
 
 import random
 import sys
-from Office import Office
-from LivingSpace import LivingSpace
-from Fellow import Fellow
-from Staff import Staff
+from Rooms import Office, LivingSpace
+from Persons import Fellow, Staff
 
 
 class Amity(object):
@@ -25,9 +23,9 @@ class Amity(object):
     def create_room(self, room_names_list, room_type):
         for room_name in room_names_list:
             if type(room_name) != str:
-                return "Room name should be a string"
+                print "Room name should be a string"
             if room_name in self.get_roomname(self.rooms["LivingSpace"]):
-                return "Cannot create duplicate rooms"
+                print "Cannot create duplicate rooms"
             if room_name in self.get_roomname(self.rooms["Office"]):
                 return "Cannot create duplicate rooms"
             if room_type == "LivingSpace":
@@ -51,7 +49,7 @@ class Amity(object):
                         allocated = random.choice(self.get_listofrooms())
                         fellow.allocated = True
                         allocated.occupants.append(fellow)
-                        self.allocated_persons.append([fellow, allocated])
+                        # self.allocated_persons.append([fellow, allocated])
                     else:
                         fellow = Fellow(first_name, last_name)
                         self.unallocated_persons.append(fellow)
@@ -80,7 +78,7 @@ class Amity(object):
     def deallocate_fellow(self, person_object, room_object):
         if room_object in self.rooms["LivingSpace"]:
             room_object.occupants.remove(person_object)
-            self.allocated_persons.remove([person_object, room_object])
+            # self.allocated_persons.remove([person_object, room_object])
         else:
             return "{0} not in a room".format(person_object, room_object)
 
@@ -96,10 +94,13 @@ class Amity(object):
         if person_type == "FELLOW":
             self.deallocate_fellow(target, assigned)
             new_room = self.get_roomobject(room_name)
+            print new_room
+            print new_room.occupants
             new_room.occupants.append(target)
+            print new_room.occupants
             self.allocated_persons.append([target, new_room])
-            print "{0} was reallocated to {1}".format(
-                target.name, new_room.room_name)
+            print "{0} {1} was reallocated to {2}".format(
+                target.first_name, target.last_name, new_room.room_name)
 
     def get_roomname(self, rooms):
         all_room_names = []
@@ -208,3 +209,11 @@ class Amity(object):
             elif len(words) <= 3:
                 self.add_people(first_name, last_name, person_type, wants_space="N")
         return "People loaded successfully"
+
+
+amity = Amity()
+amity.create_room(["Java"], "LivingSpace")
+amity.add_people("Martin", "Mungai", "FELLOW", "Y")
+amity.create_room(["Python"], "LivingSpace")
+amity.reallocatePerson("Martin", "Mungai", "FELLOW", "Python")
+amity.print_allocations()
