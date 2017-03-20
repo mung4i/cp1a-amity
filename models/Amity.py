@@ -22,42 +22,35 @@ class Amity(object):
     allocated_persons = []
     unallocated_persons = []
 
-    def create_room(self, room_names_list, room_type):
-        for room in room_names_list:
-            if type(room) != str:
-                print "Room name should be a string"
-                try:
-                    sys.exit()
-                except:
-                    print "Exception accomodates tdd"
-            if room in self.get_roomname(self.rooms["LivingSpace"]):
-                print "Cannot create duplicate rooms"
-                try:
-                    sys.exit()
-                except:
-                    print "Exception accomodates tdd"
-            if room in self.get_roomname(self.rooms["Office"]):
-                print "Cannot create duplicate rooms"
-                try:
-                    sys.exit()
-                except:
-                    print "Exception accomodates tdd"
-            if room_type == "LivingSpace":
-                livingspace = LivingSpace(room)
-                self.rooms["LivingSpace"].append(livingspace)
-                print "Living space {0} successfuly created".format(
-                    livingspace.room_name)
-            if room_type == "Office":
-                office = Office(room)
-                self.rooms["Office"].append(office)
-                print "Room {0} successfuly created".format(
-                    office.room_name)
-
-    def get_roomname(self, rooms):
-        all_room_names = []
-        for room in rooms:
-            all_room_names.append(room.room_name)
-        return all_room_names
+    def create_room(self, room_name, room_type):
+        if type(room_name) != str:
+            print "Room name should be a string"
+            try:
+                sys.exit()
+            except:
+                print "Exception accomodates tdd"
+        if room_name in self.get_roomname(self.rooms["LivingSpace"]):
+            print "Cannot create duplicate rooms"
+            try:
+                sys.exit()
+            except:
+                print "Exception accomodates tdd"
+        if room_name in self.get_roomname(self.rooms["Office"]):
+            print "Cannot create duplicate rooms"
+            try:
+                sys.exit()
+            except:
+                print "Exception accomodates tdd"
+        if room_type == "LivingSpace":
+            livingspace = LivingSpace(room_name)
+            self.rooms["LivingSpace"].append(livingspace)
+            print "Living space {0} successfuly created".format(
+                livingspace.room_name)
+        if room_type == "Office":
+            office = Office(room_name)
+            self.rooms["Office"].append(office)
+            print "Room {0} successfuly created".format(
+                office.room_name)
 
     def add_people(self, person_name, person_type, wants_space="N"):
         if person_type == "FELLOW" and wants_space == "Y":
@@ -72,7 +65,7 @@ class Amity(object):
                         self.allocated_persons.append([fellow, allocated])
                     else:
                         fellow = Fellow(person_name)
-                        fellow.allocated = False
+                        # fellow.allocated = False
                         self.unallocated_persons.append(fellow)
                         return "No rooms to add people to please create a room"
                 except IndexError:
@@ -83,6 +76,49 @@ class Amity(object):
             self.people["STAFF"].append(staff)
         elif person_type == "STAFF" and wants_space == "Y":
             print "Staff not allowed to have living spaces"
+
+    def allocate_person(self, person_name, person_type, room_name):
+        person_obj = self.get_fellowobject(person_name)
+        if person_obj not in self.unallocated_persons:
+            room = self.get_roomobject(room_name)
+            room.occupants.append(person_obj)
+            self.allocated_persons.persons([person_obj, room])
+            print "{0} was reallocated to {1}".format(
+                person_obj.name, room.room_name)
+
+        else:
+            print "{0} is already allocated, try reallocating.\
+                Call help for assistance".format(person_name)
+
+    def deallocate_fellow(self, person_object, room_object):
+        if room_object in self.rooms["LivingSpace"]:
+            room_object.occupants.remove(person_object)
+            self.allocated_persons.remove([person_object, room_object])
+        else:
+            return "{0} not in a room".format(person_object, room_object)
+
+    def reallocatePerson(self, person_name, person_type, room_name):
+        target = self.get_fellowobject(person_name)
+        assigned = self.return_room_allocated(target)
+        if target not in self.people["FELLOWS"]:
+            print "{0} does not exit".format(person_name)
+            try:
+                sys.exit()
+            except:
+                print "Exception accomodates tdd"
+        if person_type == "FELLOW":
+            self.deallocate_fellow(target, assigned)
+            new_room = self.get_roomobject(room_name)
+            new_room.occupants.append(target)
+            self.allocated_persons.append([target, new_room])
+            print "{0} was reallocated to {1}".format(
+                target.name, new_room.room_name)
+
+    def get_roomname(self, rooms):
+        all_room_names = []
+        for room in rooms:
+            all_room_names.append(room.room_name)
+        return all_room_names
 
     def get_fellowobject(self, person_name):
         for person in self.people["FELLOWS"]:
@@ -126,27 +162,6 @@ class Amity(object):
                 return room
             else:
                 return "Person not allocated, check in unallocated lists"
-
-    def deallocate_fellow(self, person_object, room_object):
-        if room_object in self.rooms["LivingSpace"]:
-            room_object.occupants.remove(person_object)
-            self.allocated_persons.remove([person_object, room_object])
-        else:
-            return "{0} not in a room".format(person_object, room_object)
-
-    def reallocatePerson(self, person_name, person_type, room_name):
-        target = self.get_fellowobject(person_name)
-        assigned = self.return_room_allocated(target)
-        if target not in self.people["FELLOWS"]:
-            print "{0} does not exit".format(person_name)
-            return 1
-        if person_type == "FELLOW":
-            self.deallocate_fellow(target, assigned)
-            new_room = self.get_roomobject(room_name)
-            new_room.occupants.append(target)
-            self.allocated_persons.append([target, new_room])
-            print "{0} was reallocated to {1}".format(
-                target.name, new_room.room_name)
 
     def print_rooms(self):
         room_names_list = []
