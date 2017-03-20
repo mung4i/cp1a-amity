@@ -209,11 +209,3 @@ class Amity(object):
             elif len(words) <= 3:
                 self.add_people(first_name, last_name, person_type, wants_space="N")
         return "People loaded successfully"
-
-
-amity = Amity()
-amity.create_room(["Java"], "LivingSpace")
-amity.add_people("Martin", "Mungai", "FELLOW", "Y")
-amity.create_room(["Python"], "LivingSpace")
-amity.reallocatePerson("Martin", "Mungai", "FELLOW", "Python")
-amity.print_allocations()
