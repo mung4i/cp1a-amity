@@ -23,7 +23,8 @@ class LivingSpaces(Base):
 class Fellows(Base):
     __tablename__ = "Fellows"
     fellow_id = Column(Integer, primary_key=True)
-    fellow_name = Column(String(25))
+    first_name = Column(String(25))
+    last_name = Column(String(25))
     person_type = Column(String(25))
     wants_space = Column(String(5))
 
@@ -31,7 +32,8 @@ class Fellows(Base):
 class Staff(Base):
     __tablename__ = "Staff"
     staff_id = Column(Integer, primary_key=True)
-    staff_name = Column(String(25))
+    first_name = Column(String(25))
+    last_name = Column(String(25))
     person_type = Column(String(25))
 
 
@@ -43,7 +45,8 @@ class Allocated(Base):
 
 class Unallocated(Base):
     __tablename__ = "Unallocated_fellows"
-    fellow_name = Column(String(50), primary_key=True)
+    first_name = Column(String(50), primary_key=True)
+    last_name = Column(String(25))
     person_type = Column(String(10))
     wants_space = Column(String(5))
 
