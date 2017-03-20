@@ -1,7 +1,7 @@
 import unittest
 import sys
 from StringIO import StringIO
-from models.Amity import Amity
+from views.Amity import Amity
 
 
 class TestAmity(unittest.TestCase):
@@ -33,51 +33,64 @@ class TestAmity(unittest.TestCase):
 
     def test_get_roomname(self):
         # Create a room called Narnia
-        self.amity.create_room('Narnia', 'Office')
+        self.amity.create_room(['Narnia'], 'Office')
         # Call the get room name function
         self.assertIn("Narnia",
                       self.amity.get_roomname(self.amity.rooms["Office"]))
 
     def test_create_room_if_room_name_is_string(self):
-        self.amity.create_room(100, 'Office')
+        self.amity.create_room([100], 'Office')
         output = sys.stdout.getvalue().strip()
         self.assertIn("Room name should be a string", output)
 
     def test_add_person(self):
         # Test fellow and staff are added to their respective lists
-        self.amity.add_people("Martin", 'FELLOW', 'Y')
-        result = self.amity.get_fellowobject("Martin")
-        self.assertEqual("Martin", result.name)
-        self.amity.add_people("Martin Mungai", 'STAFF', 'N')
-        result2 = self.amity.get_staffobject("Martin Mungai")
-        self.assertEqual("Martin Mungai", result2.name)
+        first_name = "Martin"
+        last_name = "Mungai"
+        self.amity.add_people(first_name, last_name, 'FELLOW', 'Y')
+        result = self.amity.get_fellowobject(first_name, last_name)
+        self.assertEqual("Martin", result.first_name)
+        self.amity.add_people(first_name, last_name, 'STAFF', 'N')
+        result2 = self.amity.get_staffobject(first_name, last_name)
+        self.assertEqual(first_name, result2.first_name)
 
     def test_add_person_fellow_to_livingSpace(self):
         # create a room and add a fellow(s) to it
         self.amity.create_room(["Go"], "LivingSpace")
-        self.amity.add_people("Daniel", 'FELLOW', "Y")
-        self.amity.print_allocations()
-        output = sys.stdout.getvalue().strip()
-        self.assertIn("Daniel was allocated", output)
+        self.amity.add_people("Daniel", "Wangai", 'FELLOW', "Y")
+        result = self.amity.get_fellowobject("Daniel", "Wangai")
+        room_object = self.amity.get_roomobject("Go")
+        for room in self.amity.rooms["LivingSpace"]:
+            if room == room_object:
+                return room
+        self.assertIn(result, room.occupants)
 
     def test_add_person_staff_to_livingspace(self):
-        self.amity.add_people("Martin", 'STAFF', "Y")
+        self.amity.add_people("Martin", "Mungai" "FELLOW", "Y")
+        self.amity.print_allocations()
         output = sys.stdout.getvalue().strip()
-        self.assertIn("Staff not allowed to have living spaces", output)
+        self.assertIn("Martin Mungai was allocated", output)
 
     def test_allocate_persons(self):
         # Confirm people are being allocated
         self.amity.add_people("Martin", "FELLOW", "Y")
         self.amity.print_allocations()
         output = sys.stdout.getvalue().strip()
-        self.assertIn("Martin was allocated", output)
+        self.assertIn("Martin Mungai was allocated", output)
 
     def test_reallocate_person_successfully(self):
         # Allocate person and reallocate the same person to another room
+        first_name = "Martin"
+        last_name = "Mungai"
         self.amity.create_room(["Python"], "LivingSpace")
-        self.amity.add_people("Martin", "FELLOW", "Y")
-        self.amity.reallocatePerson("Martin", "FELLOW", "Java")
-        self.assertIn("Martin", self.amity.return_people_allocated().name)
+        self.amity.add_people(first_name, last_name, "FELLOW", "Y")
+        self.amity.reallocatePerson(first_name, last_name, "FELLOW", "Java")
+        result = self.amity.get_fellowobject(first_name, last_name)
+        room_object = self.amity.get_roomobject("Java")
+        for room in self.amity.rooms["LivingSpace"]:
+            if room == room_object:
+                return room
+        self.assertIn(result, room.occupants)
 
     def test_print_rooms(self):
         self.amity.create_room("Python", "LivingSpace")
