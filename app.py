@@ -3,9 +3,9 @@
 Usage:
     amity (-i | --interactive)
     amity (-h | --help | --version)
-    amity create_room <room_name> <room_type>
-    amity add_person <person_name> <person_type> <wants_space>
-    amity reallocatePerson <person_name> <room_name>
+    amity create_room <room_type> <room_names_list>...
+    amity add_person <first_name> <last_name> <person_type> <wants_space>
+    amity reallocatePerson <first_name> <last_name> <room_name>
     amity print_allocations [--o=filename]
     amity print_unallocated [--o=filename]
     amity load_people [--o=flename]
@@ -58,7 +58,7 @@ def docopt_cmd(func):
     return fn
 
 
-class Amity (cmd.Cmd):
+class AmityInteractive(cmd.Cmd):
     intro = 'Welcome to my Amity allocation!' \
         + ' (type help for a list of commands.)'
     prompt = '<amity>'
@@ -66,61 +66,64 @@ class Amity (cmd.Cmd):
 
     @docopt_cmd
     def do_create_room(self, arg):
-        """Usage: create_room <room_names_list> <room_type>"""
+        """Usage: create_room <room_type> <room_names_list>..."""
         new_room_name = arg['<room_names_list>']
         new_room_type = arg['<room_type>']
-        print(Amity.amity.create_room(new_room_name, new_room_type))
+        AmityInteractive.amity.create_room(new_room_name, new_room_type)
 
     @docopt_cmd
     def do_add_people(self, arg):
-        """Usage: add_person <person_name> <person_type> <wants_space>"""
-        new_person_name = arg['<person_name>']
+        """Usage: add_people <person_fname> <person_lname> <person_type> <wants_space>"""
+        new_person_fname = arg['<person_fname>']
+        new_person_lname = arg['<person_lname>']
         person_type = arg['<person_type>']
         wants_space = arg['<wants_space>']
 
-        print(Amity.amity.add_people(new_person_name, person_type.upper(),
-                                     wants_space.upper()))
+        AmityInteractive.amity.add_people(new_person_fname, new_person_lname, person_type.upper(),
+                                          wants_space.upper())
 
     @docopt_cmd
     def do_allocate_person(self, arg):
-        """Usage: allocate_person <person_name> <person_type> <room_name>"""
-        person_name = arg['<person_name>']
+        """Usage: allocate_person <person_fname> <person_lname> <person_type> <room_name>"""
+        person_fname = arg['<person_fname>']
+        person_lname = arg['<person_lname>']
         person_type = arg['<person_type>']
         room_name = arg['<room_name>']
 
-        print(Amity.amity.allocate_person(person_name, person_type.upper(),
-                                          room_name))
+        AmityInteractive.amity.allocate_person(person_fname, person_lname, person_type.upper(),
+                                               room_name)
 
     @docopt_cmd
     def do_reallocatePerson(self, arg):
-        """Usage: reallocatePerson <person_name> <person_type> <room_name>"""
-        person_name = arg['<person_name>']
+        """Usage: reallocatePerson <person_fname> <person_lname> <person_type> <room_name>"""
+        person_fname = arg['<person_fname>']
+        person_lname = arg['<person_lname>']
         person_type = arg['<person_type>']
         room_name = arg['<room_name>']
 
-        print(Amity.amity.reallocatePerson(person_name, person_type.upper(),
-                                           room_name))
+        AmityInteractive.amity.reallocatePerson(person_fname, person_lname, person_type.upper(),
+                                                room_name)
 
     @docopt_cmd
     def do_print_allocations(self, arg):
         """Usage: print_allocations [--o=filename]"""
         filename = arg['--o']
 
-        print(Amity.amity.print_allocations())
+        AmityInteractive.amity.print_allocations()
 
     @docopt_cmd
     def do_print_unallocated(self, arg):
         """Usage: print_unallocated [--o=filename]"""
         filename = arg['--o']
 
-        print(Amity.amity.print_unallocated())
+        AmityInteractive.amity.print_unallocated()
 
     @docopt_cmd
     def do_load_people(self, arg):
         """Usage: load_people [--o=filename]"""
         filename = arg['--o']
 
-        print(Amity.amity.load_people())
+        AmityInteractive.amity.load_people()
 
     @docopt_cmd
     def do_save_state(self, arg):
@@ -157,4 +160,4 @@ class Amity (cmd.Cmd):
 
 
 if __name__ == "__main__":
-    Amity().cmdloop()
+    AmityInteractive().cmdloop()
