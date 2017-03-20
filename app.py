@@ -83,13 +83,13 @@ class Amity (cmd.Cmd):
 
     @docopt_cmd
     def do_allocate_person(self, arg):
-        """Usage: allocate people <person_name> <person_type> <room_name>"""
+        """Usage: allocate_person <person_name> <person_type> <room_name>"""
         person_name = arg['<person_name>']
         person_type = arg['<person_type>']
         room_name = arg['<room_name>']
 
-        print(Amity.amity.do_allocate_person(person_name, person_type.upper(),
-                                             room_name))
+        print(Amity.amity.allocate_person(person_name, person_type.upper(),
+                                          room_name))
 
     @docopt_cmd
     def do_reallocatePerson(self, arg):
@@ -138,7 +138,16 @@ class Amity (cmd.Cmd):
 
     @docopt_cmd
     def do_load_state(self, arg):
-        """Usage: """
+        """Usage: load_state <dbname> """
+        database_name = arg['<dbname>']
+
+        if os.path.exists("models/" + database_name + ".db"):
+            database_object = Sessions(database_name)
+            database_object.load_rooms()
+            database_object.load_people()
+            database_object.load_allocations()
+        else:
+            print "Database {0} does not exist".format(database_name)
 
     def do_quit(self, arg):
         """Quits out of Amity Interactive Mode."""
