@@ -11,7 +11,7 @@ class TestAmity(unittest.TestCase):
         in Amity to test cases"""
         self.amity = Amity()
         self.held, sys.stdout = sys.stdout, StringIO()
-        self.amity.create_room(["Java"], "LivingSpace")
+        self.amity.create_room("Java", "LivingSpace")
 
     def test_create_room_and_add_room_successfully(self):
         # function tests if the create room method is adding rooms to lists
@@ -26,19 +26,20 @@ class TestAmity(unittest.TestCase):
         self.amity.create_room("Java", "LivingSpace")
         self.assertIn("Java",
                       self.amity.get_roomname(self.amity.rooms["LivingSpace"]))
-        self.amity.create_room(["Java"], "LivingSpace")
+        self.amity.create_room("Java", "LivingSpace")
         output = sys.stdout.getvalue().strip()
+        print output
         self.assertIn("Cannot create duplicate rooms", output)
 
     def test_get_roomname(self):
         # Create a room called Narnia
-        self.amity.create_room(['Narnia'], 'Office')
+        self.amity.create_room('Narnia', 'Office')
         # Call the get room name function
         self.assertIn("Narnia",
                       self.amity.get_roomname(self.amity.rooms["Office"]))
 
     def test_create_room_if_room_name_is_string(self):
-        self.amity.create_room([100], 'Office')
+        self.amity.create_room(100, 'Office')
         output = sys.stdout.getvalue().strip()
         self.assertIn("Room name should be a string", output)
 
@@ -79,7 +80,7 @@ class TestAmity(unittest.TestCase):
         self.assertIn("Martin", self.amity.return_people_allocated().name)
 
     def test_print_rooms(self):
-        self.amity.create_room(["Python"], "LivingSpace")
+        self.amity.create_room("Python", "LivingSpace")
         self.assertIn("Python", self.amity.print_rooms())
 
 
