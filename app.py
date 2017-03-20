@@ -17,12 +17,11 @@ Options:
     --baud=<n>  Baudrate [default: 9600]
 """
 
-import sys
 import cmd
 import os
 from docopt import docopt, DocoptExit
-from dbmodels import create_db
-from models.Amity import Amity
+from models.dbmodels import create_db
+from views.Amity import Amity
 from sessions import Sessions
 
 
