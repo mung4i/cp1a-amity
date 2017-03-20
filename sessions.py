@@ -2,6 +2,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from models.Amity import Amity
+from models.Office import Office
+from models.LivingSpace import LivingSpace
+from models.Fellow import Fellow
+from models.Persons import Persons
 from dbmodels import Offices, LivingSpaces, Fellows, Staff, Allocated,\
     Unallocated
 
@@ -9,7 +13,7 @@ from dbmodels import Offices, LivingSpaces, Fellows, Staff, Allocated,\
 class Sessions(object):
 
     def __init__(self, dbname):
-        db_dir = "/"
+        db_dir = "models/"
         engine = create_engine('sqlite:///' + db_dir + dbname + '.db')
         Session = sessionmaker(bind=engine)
         self.session = Session()
@@ -31,7 +35,7 @@ class Sessions(object):
         print "Rooms synced successfuly"
 
     def populate_livingspaces(self):
-        for room in Amity.rooms["LivingSpaces"]:
+        for room in Amity.rooms["LivingSpace"]:
             room_object = self.session.query(LivingSpaces).filter_by(
                 livingspace_name=room.room_name).first()
 
@@ -52,7 +56,7 @@ class Sessions(object):
                 fellow_name=fellow.name).first()
 
             if fellow_object is None:
-                new_fellow = Fellows(fellow_id=fellow.id,
+                new_fellow = Fellows(fellow_id=fellow.employeeID,
                                      fellow_name=fellow.name,
                                      person_type="FELLOW", wants_space="Y")
                 self.session.add(new_fellow)
@@ -69,7 +73,7 @@ class Sessions(object):
                 staff_name=staff.name).first()
 
             if staff_object is None:
-                new_staff = Staff(staff_id=staff.id,
+                new_staff = Staff(staff_id=staff.employeeID,
                                   staff_name=staff.name, person_type="STAFF")
                 self.session.add(new_staff)
                 self.session.commit()
@@ -111,3 +115,56 @@ class Sessions(object):
                 print "Database is synced"
 
         print "Unallocated fellows synced successfully"
+
+    def load_rooms(self):
+        offices = self.session.query(Offices).all()
+        livingspaces = self.session.query(LivingSpaces).all()
+
+        for office in offices:
+            old_office = Office(office.office_name)
+            old_office.room_id = office.office_id
+            Amity.rooms["Office"].append(old_office)
+
+        for livingspace in livingspaces:
+            old_lspace = LivingSpace(livingspace.livingspace_name)
+            old_lspace.room_id = livingspace.livingspace_id
+            Amity.rooms["LivingSpace"].append(old_lspace)
+
+        print "Rooms loaded successfully"
+
+    def load_people(self):
+        fellows = self.session.query(Fellows).all()
+        staff = self.session.query(Staff).all()
+
+        for fellow in fellows:
+            old_fellow = Fellow(fellow.fellow_name)
+            old_fellow.employeeID = fellow.fellow_id
+            Amity.people["FELLOWS"].append(old_fellow)
+
+        for person in staff:
+            old_staff = Staff()
+            old_staff.name = person.staff_name
+            old_staff.employeeID = person.staff_id
+            Amity.people["STAFF"].append(old_staff)
+
+        print "People loaded successfully"
+
+    def load_allocations(self):
+        allocations = self.session.query(Allocated).all()
+        unallocations = self.session.query(Unallocated).all()
+
+        for allocated in allocations:
+            person = allocated.allocated_fellows
+            room = allocated.livingspace_name
+
+            room_obj = Amity.get_roomobject(room)
+            person_obj = Amity.get_roomobject(person)
+
+            Amity.allocated_persons.append([person_obj, room_obj])
+            room_obj.append.occupants(person_obj)
+
+        for unallocated in unallocations:
+            person = unallocated.fellow_name
+            Amity.unallocated_persons.append(person)
+
+        print "Allocations loaded successfully"
