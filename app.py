@@ -72,14 +72,24 @@ class Amity (cmd.Cmd):
         print(Amity.amity.create_room(new_room_name, new_room_type))
 
     @docopt_cmd
-    def do_add_person(self, arg):
+    def do_add_people(self, arg):
         """Usage: add_person <person_name> <person_type> <wants_space>"""
         new_person_name = arg['<person_name>']
         person_type = arg['<person_type>']
         wants_space = arg['<wants_space>']
 
-        print(Amity.amity.add_person(new_person_name, person_type.upper(),
+        print(Amity.amity.add_people(new_person_name, person_type.upper(),
                                      wants_space.upper()))
+
+    @docopt_cmd
+    def do_allocate_person(self, arg):
+        """Usage: allocate people <person_name> <person_type> <room_name>"""
+        person_name = arg['<person_name>']
+        person_type = arg['<person_type>']
+        room_name = arg['<room_name>']
+
+        print(Amity.amity.do_allocate_person(person_name, person_type.upper(),
+                                             room_name))
 
     @docopt_cmd
     def do_reallocatePerson(self, arg):
@@ -125,6 +135,10 @@ class Amity (cmd.Cmd):
         database_object.populate_staff()
         database_object.populate_allocated()
         database_object.populate_unallocated()
+
+    @docopt_cmd
+    def do_load_state(self, arg):
+        """Usage: """
 
     def do_quit(self, arg):
         """Quits out of Amity Interactive Mode."""
