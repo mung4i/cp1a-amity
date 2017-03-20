@@ -5,7 +5,6 @@ from models.Amity import Amity
 from models.Office import Office
 from models.LivingSpace import LivingSpace
 from models.Fellow import Fellow
-from models.Persons import Persons
 from dbmodels import Offices, LivingSpaces, Fellows, Staff, Allocated,\
     Unallocated
 
@@ -53,11 +52,12 @@ class Sessions(object):
     def populate_fellows(self):
         for fellow in Amity.people["FELLOWS"]:
             fellow_object = self.session.query(Fellows).filter_by(
-                fellow_name=fellow.name).first()
+                fellow_first_name=Fellows.first_name, fellow_last_name=Fellows.last_name).first()
 
             if fellow_object is None:
-                new_fellow = Fellows(fellow_id=fellow.employeeID,
-                                     fellow_name=fellow.name,
+                new_fellow = Fellows(fellow_id=Fellows.employeeID,
+                                     first_name=Fellows.first_name,
+                                     last_name=Fellows.last_name,
                                      person_type="FELLOW", wants_space="Y")
                 self.session.add(new_fellow)
                 self.session.commit()
@@ -70,11 +70,13 @@ class Sessions(object):
     def populate_staff(self):
         for staff in Amity.people["STAFF"]:
             staff_object = self.session.query(Staff).filter_by(
-                staff_name=staff.name).first()
+                first_name=staff.first_name, last_name=staff.last_name).first()
 
             if staff_object is None:
                 new_staff = Staff(staff_id=staff.employeeID,
-                                  staff_name=staff.name, person_type="STAFF")
+                                  first_name=staff.first_name,
+                                  last_name=staff.last_name,
+                                  person_type="STAFF")
                 self.session.add(new_staff)
                 self.session.commit()
 
@@ -87,12 +89,14 @@ class Sessions(object):
         for allocated in Amity.allocated_persons:
             allocate = self.session.query(Allocated).filter_by(
                 livingspace_name=allocated[1].room_name,
-                allocated_fellows=allocated[0].name).first()
+                allocated_fellows_fname=allocated[0].first_name,
+                allocated_fellows_lname=allocated[0].last_name).first()
 
             if allocate is None:
                 add_allocations = Allocated(
                     livingspace_name=allocated[1].room_name,
-                    allocated_fellows=allocated[0].name)
+                    allocated_fellows_fname=allocated[0].first_name,
+                    allocated_fellows_lname=allocated[0].last_name)
                 self.session.add(add_allocations)
                 self.session.commit()
 
@@ -104,9 +108,10 @@ class Sessions(object):
     def populate_unallocated(self):
         for unallocated in Amity.unallocated_persons:
             unallocate = self.session.query(Unallocated).filter_by(
-                fellow_name=unallocated.name).first()
+                first_name=unallocated.first_name, last_name=unallocated.last_name).first()
             if unallocate is None:
-                unallocate = Unallocated(fellow_name=unallocated.name,
+                unallocate = Unallocated(first_name=unallocated.first_name,
+                                         last_name=unallocated.last_name,
                                          person_type="FELLOW", wants_space="Y")
                 self.session.add(unallocate)
                 self.session.commit()
@@ -137,13 +142,14 @@ class Sessions(object):
         staff = self.session.query(Staff).all()
 
         for fellow in fellows:
-            old_fellow = Fellow(fellow.fellow_name)
+            old_fellow = Fellow(fellow.first_name, fellow.last_name)
             old_fellow.employeeID = fellow.fellow_id
             Amity.people["FELLOWS"].append(old_fellow)
 
         for person in staff:
             old_staff = Staff()
-            old_staff.name = person.staff_name
+            old_staff.first_name = person.first_name
+            old_staff.last_name = person.last_name
             old_staff.employeeID = person.staff_id
             Amity.people["STAFF"].append(old_staff)
 
@@ -164,7 +170,8 @@ class Sessions(object):
             room_obj.append.occupants(person_obj)
 
         for unallocated in unallocations:
-            person = unallocated.fellow_name
-            Amity.unallocated_persons.append(person)
+            person_fname = unallocated.first_name
+            person_lname = unallocated.last_name
+            Amity.unallocated_persons.append(person_fname, person_lname)
 
         print "Allocations loaded successfully"
