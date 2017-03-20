@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Text, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 
@@ -49,6 +49,6 @@ class Unallocated(Base):
 
 
 def create_db(dbname):
-    db_dir = "/"
+    db_dir = "models/"
     engine = create_engine('sqlite:///' + db_dir + dbname + '.db')
     return Base.metadata.create_all(engine)
