@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import random
-from Rooms import Office, LivingSpace
+from Room import Office, LivingSpace
 from Persons import Fellow, Staff
 
 
