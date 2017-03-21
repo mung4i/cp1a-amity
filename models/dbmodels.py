@@ -38,8 +38,8 @@ class Staff(Base):
 
 class Allocated(Base):
     __tablename__ = "Allocated_fellows"
-    livingspace_name = Column(String(25), primary_key=True)
-    allocated_fellows_fname = Column(String(50))
+    livingspace_name = Column(String(25))
+    allocated_fellows_fname = Column(String(50), primary_key=True)
     allocated_fellows_lname = Column(String(50))
 
 
