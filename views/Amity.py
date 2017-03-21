@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import random
-import sys
 from Rooms import Office, LivingSpace
 from Persons import Fellow, Staff
 
@@ -18,21 +17,26 @@ class Amity(object):
         "STAFF": []
     }
     allocated_persons = []
+    office_allocations = []
     unallocated_persons = []
 
     def create_room(self, room_names_list, room_type):
         for room_name in room_names_list:
             if type(room_name) != str:
                 print "Room name should be a string"
+
             if room_name in self.get_roomname(self.rooms["LivingSpace"]):
                 print "Cannot create duplicate rooms"
+
             if room_name in self.get_roomname(self.rooms["Office"]):
                 return "Cannot create duplicate rooms"
+
             if room_type == "LivingSpace":
                 livingspace = LivingSpace(room_name)
                 self.rooms["LivingSpace"].append(livingspace)
                 print "Living space {0} successfuly created".format(
                     livingspace.room_name)
+
             if room_type == "Office":
                 office = Office(room_name)
                 self.rooms["Office"].append(office)
@@ -41,115 +45,71 @@ class Amity(object):
 
     def add_people(self, first_name, last_name, person_type, wants_space="N"):
         if person_type == "FELLOW" and wants_space == "Y":
+
             if type(first_name) and type(last_name) == str:
+
                 try:
-                    if len(self.get_listofrooms()) != 0:
+                    if len(self.get_listoflspaces()) != 0:
+
                         fellow = Fellow(first_name, last_name)
                         self.people["FELLOWS"].append(fellow)
-                        allocated = random.choice(self.get_listofrooms())
+                        allocated = random.choice(self.get_listoflspaces())
                         fellow.allocated = True
                         allocated.occupants.append(fellow)
-                        # self.allocated_persons.append([fellow, allocated])
+                        self.allocated_persons.append([fellow, allocated])
+
                     else:
                         fellow = Fellow(first_name, last_name)
                         self.unallocated_persons.append(fellow)
                         return "No rooms to add people to please create a room"
+
                 except IndexError:
                     return "Extra person not allocated added to unallocated"
+
         if person_type == "STAFF" and wants_space == "N":
             staff = Staff(first_name, last_name)
             self.people["STAFF"].append(staff)
+
         elif person_type == "STAFF" and wants_space == "Y":
             print "Staff not allowed to have living spaces"
 
-    def allocate_person(self, first_name, last_name, person_type, room_name):
+    def allocate_person(self, first_name, last_name, person_type, room_type):
         person_obj = self.get_fellowobject(first_name, last_name)
-        if person_obj not in self.unallocated_persons:
-            room = self.get_roomobject(room_name)
-            room.occupants.append(person_obj)
-            self.allocated_persons.persons([person_obj, room])
-            print "{0} was reallocated to {1}".format(
-                person_obj.first_name, person_obj.last_name, room.room_name)
+        if room_type == "Office":
+            random_rooms = random.choice(self.get_listofoffices())
 
-        else:
-            print "{0} is already allocated, try reallocating.\
-                Call help for assistance".format(first_name, last_name)
+            if person_obj in self.unallocated_persons:
+                self.office_allocations.append([person_obj, random_rooms])
+                random_rooms.occupants.append(person_obj)
+                print "{0} {1} was allocated to {2}".format(
+                    person_obj.first_name, person_obj.last_name,
+                    random_rooms.room_name)
+
+            else:
+                print "{0} is already allocated, try reallocating.\
+                    Call help for assistance".format(first_name, last_name)
 
     def deallocate_fellow(self, person_object, room_object):
         if room_object in self.rooms["LivingSpace"]:
             room_object.occupants.remove(person_object)
-            # self.allocated_persons.remove([person_object, room_object])
+            self.allocated_persons.remove([person_object, room_object])
         else:
-            return "{0} not in a room".format(person_object, room_object)
+            return "{0} not in a living space".format(person_object,
+                                                      room_object)
 
     def reallocatePerson(self, first_name, last_name, person_type, room_name):
         target = self.get_fellowobject(first_name, last_name)
         assigned = self.return_room_allocated(target)
         if target not in self.people["FELLOWS"]:
             print "{0} does not exit".format(first_name, last_name)
-            try:
-                sys.exit()
-            except:
-                print "Exception accomodates tdd"
+
         if person_type == "FELLOW":
             self.deallocate_fellow(target, assigned)
             new_room = self.get_roomobject(room_name)
-            print new_room
-            print new_room.occupants
             new_room.occupants.append(target)
-            print new_room.occupants
             self.allocated_persons.append([target, new_room])
             print "{0} {1} was reallocated to {2}".format(
                 target.first_name, target.last_name, new_room.room_name)
-
-    def get_roomname(self, rooms):
-        all_room_names = []
-        for room in rooms:
-            all_room_names.append(room.room_name)
-        return all_room_names
-
-    def get_fellowobject(self, first_name, last_name):
-        for person in self.people["FELLOWS"]:
-            if person.first_name == first_name and person.last_name == last_name:
-                return person
-
-    def get_roomobject(self, room_name):
-        for room in self.rooms["LivingSpace"]:
-            if room.room_name == room_name:
-                return room
-
-    def get_staffobject(self, first_name, last_name):
-        for person in self.people["STAFF"]:
-            if person.first_name == first_name and person.last_name == last_name:
-                return person
-
-    def get_listofrooms(self):
-        all_rooms = []
-        for room in self.rooms["LivingSpace"]:
-            if len(room.occupants) < 4:
-                all_rooms.append(room)
-        for rooms in self.rooms["Office"]:
-            if len(room.occupants) < 4:
-                all_rooms.append(rooms)
-        return all_rooms
-
-    def get_livingspaceobject(self, room_name):
-        for room in self.rooms["LivingSpace"]:
-            if room.room_name == room_name:
-                return room
-
-    def return_people_allocated(self):
-        for person in self.people["FELLOWS"]:
-            if person.allocated is True:
-                return person
-
-    def return_room_allocated(self, person_object):
-        for room in self.rooms["LivingSpace"]:
-            if person_object in room.occupants:
-                print room.occupants
-                return room
-            else:
-                return "Person not allocated, check in unallocated lists"
 
     def print_rooms(self):
         room_names_list = []
@@ -163,9 +123,11 @@ class Amity(object):
             for person in self.allocated_persons:
                 try:
                     print "{0} {1} was allocated to {2}".format(
-                        person[0].first_name, person[0].last_name, person[1].room_name)
+                        person[0].first_name, person[0].last_name,
+                        person[1].room_name)
                 except AttributeError:
-                    print "END OF LIST"
+                    print "Add a room so {0} {1} can be allocated".format(
+                        person[0].first_name, person[0].last_name)
         else:
             print "Fellows have not been allocated yet, Please add a fellow"
 
@@ -178,7 +140,7 @@ class Amity(object):
                              "FELLOW" + " " + "Y" + '\n')
                 myfile.close()
 
-    def print_room(self, room_name):
+    def print_room_members(self, room_name):
         members = []
         obj = self.get_roomobject(room_name)
         if obj in self.rooms["LivingSpace"]:
@@ -206,6 +168,63 @@ class Amity(object):
             person_type = words[2]
             if len(words) == 4:
                 self.add_people(first_name, last_name, person_type, words[3])
+                print "Added"
             elif len(words) <= 3:
-                self.add_people(first_name, last_name, person_type, wants_space="N")
+                self.add_people(first_name, last_name, person_type,
+                                wants_space="N")
         return "People loaded successfully"
+
+    def get_roomname(self, rooms):
+        all_room_names = []
+        for room in rooms:
+            all_room_names.append(room.room_name)
+        return all_room_names
+
+    def get_fellowobject(self, first_name, last_name):
+        for person in self.people["FELLOWS"]:
+            if person.first_name == first_name and \
+                    person.last_name == last_name:
+                return person
+
+    def get_roomobject(self, room_name):
+        for room in self.rooms["LivingSpace"]:
+            if room.room_name == room_name:
+                return room
+
+    def get_officeobject(self, room_name):
+        for room in self.rooms["Office"]:
+            if room.room_name == room_name:
+                return room
+
+    def get_staffobject(self, first_name, last_name):
+        for person in self.people["STAFF"]:
+            if person.first_name == first_name and \
+                    person.last_name == last_name:
+                return person
+
+    def get_listofoffices(self):
+        all_rooms = []
+        for rooms in self.rooms["Office"]:
+            if len(rooms.occupants) < 6:
+                all_rooms.append(rooms)
+        return all_rooms
+
+    def get_listoflspaces(self):
+        all_rooms = []
+        for room in self.rooms["LivingSpace"]:
+            if len(room.occupants) < 4:
+                all_rooms.append(room)
+        return all_rooms
+
+    def return_people_allocated(self):
+        for person in self.people["FELLOWS"]:
+            if person.allocated is True:
+                return person
+
+    def return_room_allocated(self, person_object):
+        for room in self.rooms["LivingSpace"]:
+            if person_object in room.occupants:
+                print room.occupants
+                return room
+            else:
+                return "Person not allocated, check in unallocated lists"
