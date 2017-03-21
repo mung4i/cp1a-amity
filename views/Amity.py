@@ -3,7 +3,7 @@
 
 import random
 from Room import Office, LivingSpace
-from Persons import Fellow, Staff
+from Person import Fellow, Staff
 
 
 class Amity(object):
