@@ -93,29 +93,33 @@ class Amity(object):
             room_object.occupants.remove(person_object)
             self.allocated_persons.remove([person_object, room_object])
         else:
-            return "{0} not in a living space".format(person_object,
-                                                      room_object)
+            return "{0} {1} not in ".format(person_object.first_name,
+                                            person_object.last_name,
+                                            room_object.room_name)
 
     def reallocatePerson(self, first_name, last_name, person_type, room_name):
         target = self.get_fellowobject(first_name, last_name)
         assigned = self.return_room_allocated(target)
-        if target not in self.people["FELLOWS"]:
-            print "{0} does not exit".format(first_name, last_name)
-
-        if person_type == "FELLOW":
-            self.deallocate_fellow(target, assigned)
-            new_room = self.get_roomobject(room_name)
-            new_room.occupants.append(target)
-            self.allocated_persons.append([target, new_room])
-            print "{0} {1} was reallocated to {2}".format(
-                target.first_name, target.last_name, new_room.room_name)
+        if target:
+            if person_type == "FELLOW":
+                self.deallocate_fellow(target, assigned)
+                new_room = self.get_roomobject(room_name)
+                new_room.occupants.append(target)
+                self.allocated_persons.append([target, new_room])
+                print "{0} {1} was reallocated to {2}".format(
+                    target.first_name, target.last_name, new_room.room_name)
+        else:
+            print "{0} {1} does not exist".format(first_name, last_name)
 
     def print_rooms(self):
         room_names_list = []
-        rooms = self.get_listofrooms()
+        rooms = self.get_listoflspaces()
+        o_rooms = self.get_listofoffices()
         for room in rooms:
             room_names_list.append(room.room_name)
-        return room_names_list
+        for room in o_rooms:
+            room_names_list.append(room.room_name)
+        print room_names_list
 
     def print_allocations(self):
         if len(self.allocated_persons) > 0:
