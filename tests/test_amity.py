@@ -11,7 +11,7 @@ class TestAmity(unittest.TestCase):
         in Amity to test cases"""
         self.amity = Amity()
         self.held, sys.stdout = sys.stdout, StringIO()
-        self.amity.create_room("Java", "LivingSpace")
+        self.amity.create_room(["Java"], "LivingSpace")
 
     def test_create_room_and_add_room_successfully(self):
         # function tests if the create room method is adding rooms to lists
@@ -23,9 +23,9 @@ class TestAmity(unittest.TestCase):
     def test_create_room_cannot_create_duplicate(self):
         # function tests if the create room method will accepted
         # chained duplicate names
-        self.amity.create_room("Java", "LivingSpace")
-        self.assertIn("Java",
-                      self.amity.get_roomname(self.amity.rooms["LivingSpace"]))
+        self.amity.create_room(["Java"], "LivingSpace")
+        self.assertEqual("Java",
+                         self.amity.get_roomobject("Java").room_name)
         self.amity.create_room("Java", "LivingSpace")
         output = sys.stdout.getvalue().strip()
         print output
@@ -93,8 +93,10 @@ class TestAmity(unittest.TestCase):
         self.assertIn(result, room.occupants)
 
     def test_print_rooms(self):
-        self.amity.create_room("Python", "LivingSpace")
-        self.assertIn("Python", self.amity.print_rooms())
+        self.amity.create_room(["Python"], "LivingSpace")
+        self.amity.print_rooms()
+        output = sys.stdout.getvalue().strip()
+        self.assertIn("Python", output)
 
 
 if __name__ == '__main__':
