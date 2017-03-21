@@ -5,10 +5,15 @@ Usage:
     amity (-h | --help | --version)
     amity create_room <room_type> <room_names_list>...
     amity add_person <first_name> <last_name> <person_type> <wants_space>
+    amity allocate_person <person_fname> <person_lname> <person_type> \
+    <room_type>
     amity reallocatePerson <first_name> <last_name> <room_name>
     amity print_allocations [--o=filename]
     amity print_unallocated [--o=filename]
+    amity print_rooms
     amity load_people [--o=flename]
+    amity save_state <dbname>
+    amity load_state <dbname>
 
 
 Options:
@@ -22,7 +27,7 @@ import os
 from docopt import docopt, DocoptExit
 from models.dbmodels import create_db
 from views.Amity import Amity
-from sessions import Sessions
+from models.sessions import Sessions
 
 
 def docopt_cmd(func):
@@ -72,36 +77,40 @@ class AmityInteractive(cmd.Cmd):
 
     @docopt_cmd
     def do_add_people(self, arg):
-        """Usage: add_people <person_fname> <person_lname> <person_type> <wants_space>"""
+        """Usage: add_people <person_fname> <person_lname> <person_type> \
+        <wants_space>"""
         new_person_fname = arg['<person_fname>']
         new_person_lname = arg['<person_lname>']
         person_type = arg['<person_type>']
         wants_space = arg['<wants_space>']
 
-        AmityInteractive.amity.add_people(new_person_fname, new_person_lname, person_type.upper(),
+        AmityInteractive.amity.add_people(new_person_fname, new_person_lname,
+                                          person_type.upper(),
                                           wants_space.upper())
 
     @docopt_cmd
     def do_allocate_person(self, arg):
-        """Usage: allocate_person <person_fname> <person_lname> <person_type> <room_name>"""
+        """Usage: allocate_person <person_fname> <person_lname> <person_type> \
+        <room_type>"""
         person_fname = arg['<person_fname>']
         person_lname = arg['<person_lname>']
         person_type = arg['<person_type>']
-        room_name = arg['<room_name>']
+        room_type = arg['<room_type>']
 
-        AmityInteractive.amity.allocate_person(person_fname, person_lname, person_type.upper(),
-                                               room_name)
+        AmityInteractive.amity.allocate_person(
+            person_fname, person_lname, person_type.upper(), room_type)
 
     @docopt_cmd
     def do_reallocatePerson(self, arg):
-        """Usage: reallocatePerson <person_fname> <person_lname> <person_type> <room_name>"""
+        """Usage: reallocatePerson <person_fname> <person_lname> <person_type> \
+        <room_name>"""
         person_fname = arg['<person_fname>']
         person_lname = arg['<person_lname>']
         person_type = arg['<person_type>']
         room_name = arg['<room_name>']
 
-        AmityInteractive.amity.reallocatePerson(person_fname, person_lname, person_type.upper(),
-                                                room_name)
+        AmityInteractive.amity.reallocatePerson(person_fname, person_lname,
+                                                person_type.upper(), room_name)
 
     @docopt_cmd
     def do_print_allocations(self, arg):
@@ -116,6 +125,12 @@ class AmityInteractive(cmd.Cmd):
         filename = arg['--o']
 
         AmityInteractive.amity.print_unallocated()
+
+    @docopt_cmd
+    def do_print_rooms(self, arg):
+        """Usage: print_rooms """
+
+        AmityInteractive.amity.print_rooms()
 
     @docopt_cmd
     def do_load_people(self, arg):
@@ -154,7 +169,7 @@ class AmityInteractive(cmd.Cmd):
     def do_quit(self, arg):
         """Quits out of Amity Interactive Mode."""
 
-        print('Good Bye!')
+        print('Good Bye! Thank you for using Amity')
         exit()
 
 
