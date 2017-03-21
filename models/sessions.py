@@ -1,10 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models.Amity import Amity
-from models.Office import Office
-from models.LivingSpace import LivingSpace
-from models.Fellow import Fellow
+from views.Amity import Amity
+from views.Room import Office, LivingSpace
+from views.Person import Fellow, Staff
 from dbmodels import Offices, LivingSpaces, Fellows, Staff, Allocated,\
     Unallocated
 
@@ -56,9 +55,9 @@ class Sessions(object):
                 first_name=Fellows.first_name, last_name=Fellows.last_name).first()
 
             if fellow_object is None:
-                new_fellow = Fellows(fellow_id=Fellows.employeeID,
-                                     first_name=Fellows.first_name,
-                                     last_name=Fellows.last_name,
+                new_fellow = Fellows(fellow_id=fellow.employeeID,
+                                     first_name=fellow.first_name,
+                                     last_name=fellow.last_name,
                                      person_type="FELLOW", wants_space="Y")
                 self.session.add(new_fellow)
                 self.session.commit()
@@ -89,9 +88,9 @@ class Sessions(object):
     def populate_allocated(self):
         for allocated in Amity.allocated_persons:
             allocate = self.session.query(Allocated).filter_by(
-                livingspace_name=allocated[1].room_name,
-                allocated_fellows_fname=allocated[0].first_name,
-                allocated_fellows_lname=allocated[0].last_name).first()
+                livingspace_name=allocated[1][1].room_name,
+                allocated_fellows_fname=allocated[0][0].first_name,
+                allocated_fellows_lname=allocated[0][0].last_name).first()
 
             if allocate is None:
                 add_allocations = Allocated(
@@ -102,14 +101,22 @@ class Sessions(object):
                 self.session.commit()
 
             else:
-                print "Database is already synced"
+                self.session.delete(allocate)
+                self.session.commit()
+                new_allocations = Allocated(
+                    livingspace_name=allocated[1].room_name,
+                    allocated_fellows_fname=allocated[0].first_name,
+                    allocated_fellows_lname=allocated[0].last_name)
+                self.session.add(new_allocations)
+                self.session.commit()
+                print "Database is synced"
 
         print "Staff synced successfully"
 
     def populate_unallocated(self):
         for unallocated in Amity.unallocated_persons:
             unallocate = self.session.query(Unallocated).filter_by(
-                first_name=unallocated.first_name, last_name=unallocated.last_name).first()
+                first_name=Unallocated.first_name, last_name=Unallocated.last_name).first()
             if unallocate is None:
                 unallocate = Unallocated(first_name=unallocated.first_name,
                                          last_name=unallocated.last_name,
@@ -118,6 +125,13 @@ class Sessions(object):
                 self.session.commit()
 
             else:
+                self.session.delete(unallocate)
+                self.session.commit()
+                unallocations = Unallocated(first_name=unallocated.first_name,
+                                            last_name=unallocated.last_name,
+                                            person_type="FELLOW", wants_space="Y")
+                self.session.add(unallocations)
+                self.session.commit()
                 print "Database is synced"
 
         print "Unallocated fellows synced successfully"
@@ -128,6 +142,7 @@ class Sessions(object):
 
         for office in offices:
             old_office = Office(office.office_name)
+            old_office.room_name = office.office_name
             old_office.room_id = office.office_id
             Amity.rooms["Office"].append(old_office)
 
@@ -169,7 +184,7 @@ class Sessions(object):
             person_obj = self.amity.get_fellowobject(person_fname, person_lname)
 
             Amity.allocated_persons.append([person_obj, room_obj])
-            room_obj.append.occupants(person_obj)
+            room_obj.occupants.append(person_obj)
 
         for unallocated in unallocations:
             person_fname = unallocated.first_name

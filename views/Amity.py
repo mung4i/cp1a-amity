@@ -47,7 +47,6 @@ class Amity(object):
         if person_type == "FELLOW" and wants_space == "Y":
 
             if type(first_name) and type(last_name) == str:
-
                 try:
                     if len(self.get_listoflspaces()) != 0:
 
