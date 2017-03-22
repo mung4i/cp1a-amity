@@ -27,11 +27,12 @@ class Sessions(object):
                                      office_name=room.room_name)
                 self.session.add(new_office)
                 self.session.commit()
+                print "{0} has been added to the database".format(
+                    room.room_name)
 
             else:
-                print "Database is already synced"
-
-        print "Rooms synced successfuly"
+                self.session.commit()
+                print "Success! Offices have been synced"
 
     def populate_livingspaces(self):
         for room in Amity.rooms["LivingSpace"]:
@@ -43,16 +44,18 @@ class Sessions(object):
                                           livingspace_name=room.room_name)
                 self.session.add(new_lspace)
                 self.session.commit()
+                print "{0} has been added to the database".format(
+                    room.room_name)
 
             else:
-                print "Database is already synced"
-
-        print "Rooms synced successfuly"
+                self.session.commit()
+                print "Success! Living spaces have been synced"
 
     def populate_fellows(self):
         for fellow in Amity.people["FELLOWS"]:
             fellow_object = self.session.query(Fellows).filter_by(
-                first_name=Fellows.first_name, last_name=Fellows.last_name).first()
+                first_name=fellow.first_name,
+                last_name=fellow.last_name).first()
 
             if fellow_object is None:
                 new_fellow = Fellows(fellow_id=fellow.employeeID,
@@ -61,11 +64,12 @@ class Sessions(object):
                                      person_type="FELLOW", wants_space="Y")
                 self.session.add(new_fellow)
                 self.session.commit()
+                print "{0} {1} has been added to the database".format(
+                    fellow.first_name, fellow.last_name)
 
             else:
-                print "Database is already synced"
-
-        print "Fellows synced successfully"
+                self.session.commit()
+                print "Success! Fellows have been synced"
 
     def populate_staff(self):
         for staff in Amity.people["STAFF"]:
@@ -79,31 +83,37 @@ class Sessions(object):
                                   person_type="STAFF")
                 self.session.add(new_staff)
                 self.session.commit()
+                print "{0} {1} has been added to the database".format(
+                    staff.first_name, staff.last_name)
 
-            else:
-                print "Database is already synced"
-
-        print "Staff synced successfully"
+            elif staff_object:
+                self.session.commit()
+                print "Success! Staff have been synced"
 
     def populate_allocated(self):
         for allocated in Amity.allocated_persons:
             allocate = self.session.query(Allocated).filter_by(
-                livingspace_name=allocated[1][1].room_name,
-                allocated_fellows_fname=allocated[0][0].first_name,
-                allocated_fellows_lname=allocated[0][0].last_name).first()
+                id=allocated[0].employeeID,
+                livingspace_name=allocated[1].room_name,
+                allocated_fellows_fname=allocated[0].first_name,
+                allocated_fellows_lname=allocated[0].last_name).first()
 
             if allocate is None:
                 add_allocations = Allocated(
+                    id=allocated[0].employeeID,
                     livingspace_name=allocated[1].room_name,
                     allocated_fellows_fname=allocated[0].first_name,
                     allocated_fellows_lname=allocated[0].last_name)
                 self.session.add(add_allocations)
                 self.session.commit()
+                print "{0} {1} allocations' have been recorded".format(
+                    allocated[0].first_name, allocated[0].last_name)
 
             else:
                 self.session.delete(allocate)
                 self.session.commit()
                 new_allocations = Allocated(
+                    id=allocated[0].employeeID,
                     livingspace_name=allocated[1].room_name,
                     allocated_fellows_fname=allocated[0].first_name,
                     allocated_fellows_lname=allocated[0].last_name)
@@ -111,30 +121,32 @@ class Sessions(object):
                 self.session.commit()
                 print "Database is synced"
 
-        print "Staff synced successfully"
-
     def populate_unallocated(self):
         for unallocated in Amity.unallocated_persons:
             unallocate = self.session.query(Unallocated).filter_by(
-                first_name=Unallocated.first_name, last_name=Unallocated.last_name).first()
+                first_name=Unallocated.first_name,
+                last_name=Unallocated.last_name).first()
             if unallocate is None:
-                unallocate = Unallocated(first_name=unallocated.first_name,
+                unallocate = Unallocated(id=unallocated.employeeID,
+                                         first_name=unallocated.first_name,
                                          last_name=unallocated.last_name,
                                          person_type="FELLOW", wants_space="Y")
                 self.session.add(unallocate)
                 self.session.commit()
+                print "{0} {1} has been added to unallocated".format(
+                    unallocated.first_name, unallocated.last_name)
 
             else:
                 self.session.delete(unallocate)
                 self.session.commit()
-                unallocations = Unallocated(first_name=unallocated.first_name,
+                unallocations = Unallocated(id=unallocated.employeeID,
+                                            first_name=unallocated.first_name,
                                             last_name=unallocated.last_name,
-                                            person_type="FELLOW", wants_space="Y")
+                                            person_type="FELLOW",
+                                            wants_space="Y")
                 self.session.add(unallocations)
                 self.session.commit()
                 print "Database is synced"
-
-        print "Unallocated fellows synced successfully"
 
     def load_rooms(self):
         offices = self.session.query(Offices).all()
@@ -176,20 +188,17 @@ class Sessions(object):
         unallocations = self.session.query(Unallocated).all()
 
         for allocated in allocations:
-            person_fname = allocated.allocated_fellows_fname
-            person_lname = allocated.allocated_fellows_lname
             room = allocated.livingspace_name
-
             room_obj = self.amity.get_roomobject(room)
-            person_obj = self.amity.get_fellowobject(person_fname, person_lname)
-
+            person_obj = Fellow(allocated.allocated_fellows_fname,
+                                allocated.allocated_fellows_lname)
+            person_obj.employeeID = allocated.id
             Amity.allocated_persons.append([person_obj, room_obj])
             room_obj.occupants.append(person_obj)
 
         for unallocated in unallocations:
-            person_fname = unallocated.first_name
-            person_lname = unallocated.last_name
-            person_obj = self.amity.get_fellowobject(person_fname, person_lname)
+            person_obj = Fellow(unallocated.first_name, unallocated.last_name)
+            person_obj.employeeID = unallocated.id
             Amity.unallocated_persons.append(person_obj)
 
         print "Allocations loaded successfully"
