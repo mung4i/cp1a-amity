@@ -7,7 +7,7 @@ Usage:
     amity add_person <first_name> <last_name> <person_type> <wants_space>
     amity allocate_person <person_fname> <person_lname> <person_type> \
     <room_type>
-    amity reallocatePerson <first_name> <last_name> <room_name>
+    amity reallocate_person <first_name> <last_name> <room_name>
     amity print_allocations [--o=filename]
     amity print_unallocated [--o=filename]
     amity print_rooms
@@ -24,6 +24,8 @@ Options:
 
 import cmd
 import os
+from termcolor import cprint
+from pyfiglet import figlet_format
 from docopt import docopt, DocoptExit
 from models.dbmodels import create_db
 from views.Amity import Amity
@@ -45,7 +47,7 @@ def docopt_cmd(func):
             # We print a message to the user and the usage block.
 
             print('Invalid Command!')
-            print(e)
+            cprint(e, "yellow")
             return
 
         except SystemExit:
@@ -63,9 +65,23 @@ def docopt_cmd(func):
 
 
 class AmityInteractive(cmd.Cmd):
-    intro = 'Welcome to my Amity allocation!' \
+    intro = 'Welcome to Amity! An office allocation app.' \
         + ' (type help for a list of commands.)'
     prompt = '<amity>'
+    """
+    Displays an app header after app is launched
+    """
+
+    os.system("clear")
+    print("\n")
+    cprint(figlet_format('AMITY', font='roman'), 'blue')
+    cprint('--------------------------------------------------------------',
+           'magenta')
+    cprint("\tAmity is a Command Line office allocation App.", 'green')
+    cprint('--------------------------------------------------------------',
+           'magenta')
+    cprint("\n\tNew to the app? Type 'help' to see a full list of commands\
+    \n", 'white')
     amity = Amity()
 
     @docopt_cmd
@@ -73,7 +89,7 @@ class AmityInteractive(cmd.Cmd):
         """Usage: create_room <room_type> <room_names_list>..."""
         new_room_name = arg['<room_names_list>']
         new_room_type = arg['<room_type>']
-        AmityInteractive.amity.create_room(new_room_name, new_room_type)
+        AmityInteractive.amity.create_room(new_room_type, new_room_name)
 
     @docopt_cmd
     def do_add_people(self, arg):
@@ -101,28 +117,28 @@ class AmityInteractive(cmd.Cmd):
             person_fname, person_lname, person_type.upper(), room_type)
 
     @docopt_cmd
-    def do_reallocatePerson(self, arg):
-        """Usage: reallocatePerson <person_fname> <person_lname> <person_type> \
+    def do_reallocate_person(self, arg):
+        """Usage: reallocate_person <person_fname> <person_lname> <person_type> \
         <room_name>"""
         person_fname = arg['<person_fname>']
         person_lname = arg['<person_lname>']
         person_type = arg['<person_type>']
         room_name = arg['<room_name>']
 
-        AmityInteractive.amity.reallocatePerson(person_fname, person_lname,
-                                                person_type.upper(), room_name)
+        AmityInteractive.amity.reallocate_person(person_fname,
+                                                 person_lname,
+                                                 person_type.upper(),
+                                                 room_name)
 
     @docopt_cmd
     def do_print_allocations(self, arg):
-        """Usage: print_allocations [--o=filename]"""
-        filename = arg['--o']
+        """Usage: print_allocations"""
 
         AmityInteractive.amity.print_allocations()
 
     @docopt_cmd
     def do_print_unallocated(self, arg):
-        """Usage: print_unallocated [--o=filename]"""
-        filename = arg['--o']
+        """Usage: print_unallocated"""
 
         AmityInteractive.amity.print_unallocated()
 
@@ -134,8 +150,7 @@ class AmityInteractive(cmd.Cmd):
 
     @docopt_cmd
     def do_load_people(self, arg):
-        """Usage: load_people [--o=filename]"""
-        filename = arg['--o']
+        """Usage: load_people"""
 
         AmityInteractive.amity.load_people()
 
