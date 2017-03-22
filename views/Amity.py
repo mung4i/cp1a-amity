@@ -48,22 +48,21 @@ class Amity(object):
 
             if type(first_name) and type(last_name) == str:
                 try:
-                    if len(self.get_listoflspaces()) != 0:
-
-                        fellow = Fellow(first_name, last_name)
-                        self.people["FELLOWS"].append(fellow)
-                        allocated = random.choice(self.get_listoflspaces())
-                        fellow.allocated = True
-                        allocated.occupants.append(fellow)
-                        self.allocated_persons.append([fellow, allocated])
-
-                    else:
-                        fellow = Fellow(first_name, last_name)
-                        self.unallocated_persons.append(fellow)
-                        return "No rooms to add people to please create a room"
+                    allocated = random.choice(self.get_listoflspaces())
+                    fellow = Fellow(first_name, last_name)
+                    self.people["FELLOWS"].append(fellow)
+                    print "{0} added to Fellows".format(fellow)
+                    fellow.allocated = True
+                    allocated.occupants.append(fellow)
+                    self.allocated_persons.append([fellow, allocated])
+                    print "{0} has been allocated to {1}".format(
+                        fellow, allocated)
 
                 except IndexError:
-                    return "Extra person not allocated added to unallocated"
+                    fellow = Fellow(first_name, last_name)
+                    self.unallocated_persons.append(fellow)
+                    print "No rooms to add people to please create a room \
+                    Extra person not allocated added to unallocated"
 
         if person_type == "STAFF" and wants_space == "N":
             staff = Staff(first_name, last_name)
@@ -80,6 +79,7 @@ class Amity(object):
             if person_obj in self.unallocated_persons:
                 self.office_allocations.append([person_obj, random_rooms])
                 random_rooms.occupants.append(person_obj)
+                self.people["FELLOWS"].append(person_obj)
                 print "{0} {1} was allocated to {2}".format(
                     person_obj.first_name, person_obj.last_name,
                     random_rooms.room_name)
@@ -97,7 +97,7 @@ class Amity(object):
                                             person_object.last_name,
                                             room_object.room_name)
 
-    def reallocatePerson(self, first_name, last_name, person_type, room_name):
+    def reallocate_person(self, first_name, last_name, person_type, room_name):
         target = self.get_fellowobject(first_name, last_name)
         assigned = self.return_room_allocated(target)
         if target:
@@ -137,7 +137,7 @@ class Amity(object):
     def print_unallocated(self):
         open("unallocated.txt", "w").close()
         for person in self.unallocated_persons:
-            print (person.first_name, person.last_name)
+            print "{0} {1}".format(person.first_name, person.last_name)
             with open("unallocated.txt", "a") as myfile:
                 myfile.write(person.first_name + " " + person.last_name +
                              "FELLOW" + " " + "Y" + '\n')
