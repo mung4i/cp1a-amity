@@ -38,14 +38,16 @@ class Staff(Base):
 
 class Allocated(Base):
     __tablename__ = "Allocated_fellows"
+    id = Column(Integer, primary_key=True)
     livingspace_name = Column(String(25))
-    allocated_fellows_fname = Column(String(50), primary_key=True)
+    allocated_fellows_fname = Column(String(50))
     allocated_fellows_lname = Column(String(50))
 
 
 class Unallocated(Base):
     __tablename__ = "Unallocated_fellows"
-    first_name = Column(String(50), primary_key=True)
+    id = Column(Integer, primary_key=True)
+    first_name = Column(String(50))
     last_name = Column(String(25))
     person_type = Column(String(10))
     wants_space = Column(String(5))
