@@ -1,6 +1,7 @@
 import unittest
 import sys
 from StringIO import StringIO
+
 from views.Amity import Amity
 
 
@@ -46,12 +47,12 @@ class TestAmity(unittest.TestCase):
         # Test fellow and staff are added to their respective lists
         first_name = "Martin"
         last_name = "Mungai"
-        self.amity.add_people(first_name, last_name, 'FELLOW', 'Y')
+        self.amity.add_person_fellow(first_name, last_name, 'FELLOW', 'Y')
 
         self.assertEqual("Martin",
                          self.amity.get_fellowobject(first_name,
                                                      last_name).first_name)
-        self.amity.add_people(first_name, last_name, 'STAFF', 'N')
+        self.amity.add_person_staff(first_name, last_name, 'STAFF', 'N')
         result2 = self.amity.get_staffobject(first_name, last_name)
         self.assertEqual(first_name, result2.first_name)
 
@@ -59,7 +60,7 @@ class TestAmity(unittest.TestCase):
         # create a room and add a fellow(s) to it
         self.amity.rooms["LivingSpace"] = []
         self.amity.create_room("LivingSpace", ["Go"])
-        self.amity.add_people("Martin", "Mungai", 'FELLOW', "Y")
+        self.amity.add_person_fellow("Martin", "Mungai", 'FELLOW', "Y")
         result = self.amity.get_fellowobject("Martin", "Mungai")
         room_object = self.amity.get_roomobject(["Go"])
         for room in self.amity.rooms["LivingSpace"]:
@@ -68,14 +69,14 @@ class TestAmity(unittest.TestCase):
         self.assertIn(result.first_name, room.occupants[0].first_name)
 
     def test_add_person_staff_to_livingspace(self):
-        self.amity.add_people("Martin", "Mungai", "STAFF", "Y")
+        self.amity.add_person_staff("Martin", "Mungai", "STAFF", "Y")
         output = sys.stdout.getvalue().strip()
         self.assertIn("Staff not allowed to have living spaces", output)
 
     def test_allocate_persons(self):
         # Confirm people are being allocated
         self.amity.create_room("Office", ["Scala"])
-        self.amity.add_people("Martin", "Mungai", "FELLOW", "Y")
+        self.amity.add_person_fellow("Martin", "Mungai", "FELLOW", "Y")
         output = sys.stdout.getvalue().strip()
         self.assertIn("Martin Mungai has been allocated", output)
 
@@ -84,15 +85,15 @@ class TestAmity(unittest.TestCase):
         first_name = "Martin"
         last_name = "Mungai"
         self.amity.create_room("LivingSpace", ["Python"])
-        self.amity.add_people(first_name, last_name, "FELLOW", "Y")
+        self.amity.add_person_fellow(first_name, last_name, "FELLOW", "Y")
         self.amity.create_room("LivingSpace", ["Narnia"])
-        self.amity.reallocate_person(first_name, last_name, "FELLOW", "Java")
+        self.amity.reallocate_person(first_name, last_name, "FELLOW", "Narnia")
         result = self.amity.get_fellowobject(first_name, last_name)
-        room_object = self.amity.get_roomobject(["Java"])
+        room_object = self.amity.get_roomobject(["Narnia"])
         for room in self.amity.rooms["LivingSpace"]:
             if room == room_object:
-                return room
-        self.assertIn(result, room.occupants)
+                print room
+                self.assertIn(first_name, room.occupants)
 
     def test_print_rooms(self):
         self.amity.create_room("LivingSpace", ["Python"])
