@@ -1,2 +1,14 @@
 [report]
 show_missing = True
+
+exclude_lines =
+    def __repr__
+    def __str__
+    def __init__
+
+[run]
+source = views/
+
+omit =
+    /usr/*
+    *termcolor.py
