@@ -9,6 +9,9 @@ class Persons(object):
         self.last_name = last_name
         self.employeeID = id(self)
 
+    def __repr__(self):
+        return self.first_name, self.last_name
+
 
 class Fellow(Persons):
     wants_space = "N"
