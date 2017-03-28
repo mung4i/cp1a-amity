@@ -4,7 +4,7 @@ Usage:
     amity (-i | --interactive)
     amity (-h | --help | --version)
     amity create_room <room_type> <room_names_list>...
-    amity add_person <first_name> <last_name> <person_type> <wants_space>
+    amity add_person <first_name> <last_name> <person_type> [<wants_space>]
     amity allocate_person <person_fname> <person_lname> <person_type> \
     <room_type>
     amity reallocate_person <first_name> <last_name> <room_name>
@@ -24,9 +24,11 @@ Options:
 
 import cmd
 import os
+
 from termcolor import cprint
 from pyfiglet import figlet_format
 from docopt import docopt, DocoptExit
+
 from models.dbmodels import create_db
 from views.Amity import Amity
 from models.sessions import Sessions
@@ -92,17 +94,34 @@ class AmityInteractive(cmd.Cmd):
         AmityInteractive.amity.create_room(new_room_type, new_room_name)
 
     @docopt_cmd
-    def do_add_people(self, arg):
-        """Usage: add_people <person_fname> <person_lname> <person_type> \
-        <wants_space>"""
+    def do_add_person(self, arg):
+        """Usage: add_person <person_fname> <person_lname> <person_type> \
+        [<wants_space>]"""
         new_person_fname = arg['<person_fname>']
         new_person_lname = arg['<person_lname>']
         person_type = arg['<person_type>']
         wants_space = arg['<wants_space>']
 
-        AmityInteractive.amity.add_people(new_person_fname, new_person_lname,
-                                          person_type.upper(),
-                                          wants_space.upper())
+        if arg['<person_type>'].upper() in ['FELLOW', 'F']:
+            if arg['<wants_space>']:
+                AmityInteractive.amity.add_person_fellow(new_person_fname,
+                                                         new_person_lname,
+                                                         person_type.upper(),
+                                                         wants_space.upper())
+            else:
+                AmityInteractive.amity.add_person_fellow(new_person_fname,
+                                                         new_person_lname,
+                                                         person_type.upper())
+        elif arg['<person_type>'].upper() in ['STAFF', 'S']:
+            if arg['<wants_space>']:
+                AmityInteractive.amity.add_person_staff(new_person_fname,
+                                                        new_person_lname,
+                                                        person_type.upper(),
+                                                        wants_space.upper())
+            else:
+                AmityInteractive.amity.add_person_staff(new_person_fname,
+                                                        new_person_lname,
+                                                        person_type.upper())
 
     @docopt_cmd
     def do_allocate_person(self, arg):
