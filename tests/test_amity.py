@@ -56,6 +56,14 @@ class TestAmity(unittest.TestCase):
         result2 = self.amity.get_staffobject(first_name, last_name)
         self.assertEqual(first_name, result2.first_name)
 
+    def test_add_person_fellow_without_livingspace(self):
+        first_name = "Martin"
+        last_name = "Mungai"
+        self.amity.add_person_fellow(first_name, last_name, 'FELLOW', 'N')
+        self.assertEqual("Martin",
+                         self.amity.get_fellowobject(first_name,
+                                                     last_name).first_name)
+
     def test_add_person_fellow_to_livingSpace(self):
         # create a room and add a fellow(s) to it
         self.amity.rooms["LivingSpace"] = []
@@ -76,9 +84,9 @@ class TestAmity(unittest.TestCase):
     def test_allocate_persons(self):
         # Confirm people are being allocated
         self.amity.create_room("Office", ["Scala"])
-        self.amity.add_person_fellow("Martin", "Mungai", "FELLOW", "Y")
+        self.amity.add_person_fellow("Martin", "Mungai", "FELLOW", "N")
         output = sys.stdout.getvalue().strip()
-        self.assertIn("Martin Mungai has been allocated", output)
+        self.assertIn("Martin Mungai was allocated", output)
 
     def test_reallocate_person_successfully(self):
         # Allocate person and reallocate the same person to another room
@@ -100,6 +108,47 @@ class TestAmity(unittest.TestCase):
         self.amity.print_room("Python")
         output = sys.stdout.getvalue().strip()
         self.assertIn("Python", output)
+
+    def test_add_person_fellow_without_existing_rooms(self):
+        self.amity.rooms["Office"] = []
+        self.amity.rooms["LivingSpace"] = []
+        first_name = "Martin"
+        last_name = "Mungai"
+        self.amity.add_person_fellow(first_name, last_name, 'FELLOW', 'N')
+        self.assertEqual("Martin",
+                         self.amity.get_fellowobject(first_name,
+                                                     last_name).first_name)
+        result = self.amity.get_fellowobject("Martin", "Mungai")
+        self.assertIn(result, self.amity.unallocated_persons)
+        output = sys.stdout.getvalue().strip()
+        self.assertIn("You need to create rooms", output)
+
+    def test_allocate_staff_members(self):
+        self.amity.create_room("Office", ["Hogwarts"])
+        self.amity.allocate_person("Martin", "Mungai", "STAFF", "Office")
+        output = sys.stdout.getvalue().strip()
+        self.assertIn("Martin Mungai was allocated", output)
+
+    def test_allocate_fellows_in_unallocated(self):
+        self.amity.rooms["LivingSpace"] = []
+        first_name = "Martin"
+        last_name = "Mungai"
+        self.amity.add_person_fellow(first_name, last_name, 'FELLOW', 'Y')
+        self.amity.create_room("LivingSpace", ["Python"])
+        self.amity.allocate_person("Martin", "Mungai", "FELLOW", "LivingSpace")
+        output = sys.stdout.getvalue().strip()
+        self.assertIn("Martin Mungai has been allocated", output)
+
+    def test_reallocate_person_to_a_random_room(self):
+        self.amity.rooms["LivingSpace"] = []
+        self.amity.create_room("LivingSpace", ["Python"])
+        first_name = "Martin"
+        last_name = "Mungai"
+        self.amity.add_person_fellow(first_name, last_name, 'FELLOW', 'Y')
+        self.amity.create_room("LivingSpace", ["Java"])
+        self.amity.reallocate_person("Martin", "Mungai", "FELLOW", "Java")
+        output = sys.stdout.getvalue().strip()
+        self.assertIn("Martin Mungai was reallocated to Java", output)
 
 
 if __name__ == '__main__':
