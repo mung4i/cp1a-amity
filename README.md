@@ -25,7 +25,7 @@ To set up the app on your local machine:
     `virtualenv cp1a-amity`
     `source cp1a-amity/bin/activate`
 
-* Git clone this link [GitHub]: git@github.com:mungaiandela/cp1a-amity.git
+* Git clone this link [GitHub](git@github.com:mungaiandela/cp1a-amity.git)
 
 * Pip install requirements.txt
     `pip install -r requirements.txt`
