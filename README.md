@@ -1,5 +1,6 @@
 # cp1a-amity
 [![Build Status](https://travis-ci.org/mungaiandela/cp1a-amity.svg?branch=develop)](https://travis-ci.org/mungaiandela/cp1a-amity)
+[![Coverage Status](https://coveralls.io/repos/github/mungaiandela/cp1a-amity/badge.svg?branch=develop)](https://coveralls.io/github/mungaiandela/cp1a-amity?branch=develop)
 
 
 ## Background
