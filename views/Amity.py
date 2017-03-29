@@ -156,7 +156,7 @@ class Amity(object):
                     person_obj = self.get_staffobject(first_name, last_name)
                     random_room.occupants.append(person_obj)
                     self.print_success("\n{0} {1} was"
-                                       "allocated to {2}\n".format(
+                                       " allocated to {2}\n".format(
                                            person_obj.first_name,
                                            person_obj.last_name,
                                            random_room.room_name))
@@ -176,7 +176,7 @@ class Amity(object):
                         fellow.first_name,
                         fellow.last_name,
                         allocated_room.room_name))
-                self.unallocated_persons.remove(person_obj)
+                self.unallocated_persons.remove(fellow)
                 return 1
 
         except IndexError:
@@ -202,7 +202,7 @@ class Amity(object):
                     new_room = self.get_roomobject(room_name)
                     new_room.occupants.append(target)
                     self.print_success("\n{0} {1} was reallocated to"
-                                       "{2}".format(
+                                       " {2}".format(
                                            target.first_name, target.last_name,
                                            new_room.room_name))
             else:
