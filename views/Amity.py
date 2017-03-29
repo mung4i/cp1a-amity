@@ -23,28 +23,29 @@ class Amity(object):
 
     def create_room(self, room_type, room_names_list):
         for room_name in room_names_list:
-            if type(room_name) != str:
-                self.print_error("Room name should be a string")
+            if not room_name.isalpha():
+                self.print_error("\nRoom name should be a string")
                 return -1
 
             if room_name in self.get_roomname(self.rooms["LivingSpace"]):
-                self.print_error("Cannot create duplicate rooms")
+                self.print_error("\nCannot create duplicate rooms")
                 return -1
 
             if room_name in self.get_roomname(self.rooms["Office"]):
-                self.print_error("Cannot create duplicate rooms")
+                self.print_error("\nCannot create duplicate rooms")
                 return -1
 
             if room_type == "LivingSpace":
                 livingspace = LivingSpace(room_name)
                 self.rooms["LivingSpace"].append(livingspace)
-                self.print_success("Living space {0} has been created".format(
-                    livingspace.room_name))
+                self.print_success("\nLiving space {0} has been"
+                                   " created".format(
+                                       livingspace.room_name))
 
             if room_type == "Office":
                 office = Office(room_name)
                 self.rooms["Office"].append(office)
-                self.print_success("Office {0} has been created".format(
+                self.print_success("\nOffice {0} has been created".format(
                     office.room_name))
 
     def add_person_fellow(self, first_name, last_name, person_type,
@@ -60,7 +61,7 @@ class Amity(object):
                     fellow.allocated = True
                     allocated_room.occupants.append(fellow)
                     self.print_success(
-                        "{0} {1} has been allocated to {2}".format(
+                        "\n{0} {1} has been allocated to {2}".format(
                             fellow.first_name,
                             fellow.last_name,
                             allocated_room.room_name))
@@ -72,9 +73,9 @@ class Amity(object):
                     return
                 self.people["FELLOWS"].append(fellow)
                 self.unallocated_persons.append(fellow)
-                self.print_error("No rooms to add {0} to.\n Please"
+                self.print_error("\nNo rooms to add {0} to.\n Please"
                                  " create a room.\n Extra person not "
-                                 "allocated added to unallocated".format(
+                                 "allocated added to waiting list".format(
                                      first_name))
 
             if person_type == "FELLOW" and wants_space == "N":
@@ -92,9 +93,9 @@ class Amity(object):
                         return
                     self.people["FELLOWS"].append(fellow)
                     self.unallocated_persons.append(fellow)
-                    self.print_error("No rooms to add Fellow to.\n Please"
+                    self.print_error("\nNo rooms to add Fellow to.\n Please"
                                      " create a room.\n Extra person not "
-                                     "allocated added to unallocated")
+                                     "allocated added to waiting list")
 
     def add_person_staff(self, first_name, last_name, person_type,
                          wants_space="N"):
@@ -119,21 +120,21 @@ class Amity(object):
     def check_if_fellow_exists(self, new_fellow):
         if new_fellow.employeeID in [fellow.employeeID
                                      for fellow in self.people["FELLOWS"]]:
-            self.print_error("Cannot create fellow with the same name")
+            self.print_error("\nCannot create fellow with the same name")
             return -1
         else:
-            self.print_success("{0} {1} added to Fellows".format(
+            self.print_success("\n{0} {1} added to Fellows".format(
                 new_fellow.first_name, new_fellow.last_name))
             return True
 
     def check_if_staff_exists(self, new_staff):
         if new_staff.employeeID in [staff.employeeID
                                     for staff in self.people["STAFF"]]:
-            self.print_error("Cannot create staff member with \
+            self.print_error("\nCannot create staff member with \
             the same name")
             return -1
         else:
-            self.print_success("{0} {1} added to Staff".format(
+            self.print_success("\n{0} {1} added to Staff".format(
                 new_staff.first_name, new_staff.last_name))
             return True
 
@@ -145,20 +146,24 @@ class Amity(object):
                 if person_type == "FELLOW":
                     person_obj = self.get_fellowobject(first_name, last_name)
                     random_room.occupants.append(person_obj)
-                    self.print_success("{0} {1} was allocated to {2}\n".format(
-                        person_obj.first_name, person_obj.last_name,
-                        random_room.room_name))
+                    self.print_success("\n{0} {1} was"
+                                       " allocated to {2}\n".format(
+                                           person_obj.first_name,
+                                           person_obj.last_name,
+                                           random_room.room_name))
                     return 1
                 elif person_type == "STAFF":
                     person_obj = self.get_staffobject(first_name, last_name)
                     random_room.occupants.append(person_obj)
-                    self.print_success("{0} {1} was allocated to {2}\n".format(
-                        person_obj.first_name, person_obj.last_name,
-                        random_room.room_name))
+                    self.print_success("\n{0} {1} was"
+                                       "allocated to {2}\n".format(
+                                           person_obj.first_name,
+                                           person_obj.last_name,
+                                           random_room.room_name))
                     return 1
 
                 else:
-                    self.print_error("{0} {1} is already allocated.\n\
+                    self.print_error("\n {0} {1} is already allocated.\n\
                     Please try reallocating".format(
                         first_name, last_name))
                     return -1
@@ -167,7 +172,7 @@ class Amity(object):
                 fellow = self.get_fellowobject(first_name, last_name)
                 allocated_room.occupants.append(fellow)
                 self.print_success(
-                    "{0} {1} has been allocated to {2}".format(
+                    "\n{0} {1} has been allocated to {2}".format(
                         fellow.first_name,
                         fellow.last_name,
                         allocated_room.room_name))
@@ -183,7 +188,7 @@ class Amity(object):
         if room_object in self.rooms["LivingSpace"]:
             room_object.occupants.remove(person_object)
         else:
-            self.print_error("{0} {1} not in this room ".format(
+            self.print_error("\n{0} {1} not in this room ".format(
                 person_object.first_name,
                 person_object.last_name))
 
@@ -196,26 +201,35 @@ class Amity(object):
                     self.deallocate_fellow(target, assigned)
                     new_room = self.get_roomobject(room_name)
                     new_room.occupants.append(target)
-                    self.print_success("{0} {1} was reallocated to {2}".format(
-                        target.first_name, target.last_name,
-                        new_room.room_name))
+                    self.print_success("\n{0} {1} was reallocated to"
+                                       "{2}".format(
+                                           target.first_name, target.last_name,
+                                           new_room.room_name))
             else:
-                self.print_error("{0} {1} does not exist".format(first_name,
-                                                                 last_name))
+                self.print_error("\n{0} {1} does not exist".format(first_name,
+                                                                   last_name))
         except AttributeError:
-            self.print_error("Allocate {0} {1}\
+            self.print_error("\nAllocate {0} {1}\
                              to Livingspace instead of office")
 
-    def print_rooms(self):
-        room_names_list = []
-        for rooms in self.rooms["Office"]:
-            room_names_list.append(rooms.room_name)
+    def print_room(self, room_name):
+        for room in self.rooms["Office"]:
+            if room.room_name == room_name:
+                print "\n"
+                if room.occupants:
+                    print "Office:", room.room_name
+                    print "***************************"
+                    for person in room.occupants:
+                        print person.first_name, person.last_name
         for room in self.rooms["LivingSpace"]:
-            room_names_list.append(room.room_name)
-        for room in room_names_list:
-            self.print_success(room)
-            print "\n"
-        if not room_names_list:
+            if room.room_name == room_name:
+                print "\n"
+                if room.occupants:
+                    print "LivingSpace:", room.room_name
+                    print "***************************"
+                    for person in room.occupants:
+                        print person.first_name, person.last_name
+
             self.print_error("Add rooms to Amity")
 
     def print_allocations(self):
@@ -243,7 +257,7 @@ class Amity(object):
         if not self.unallocated_persons:
             self.print_error("Existing persons have all been allocated")
         for person in self.unallocated_persons:
-            self.print_success("{0} {1}".format(
+            self.print_success("\n{0} {1}".format(
                 person.first_name, person.last_name))
             with open("unallocated.txt", "a") as myfile:
                 myfile.write(person.first_name + " " + person.last_name +
@@ -268,9 +282,9 @@ class Amity(object):
                     self.add_person_staff(first_name, last_name, person_type,
                                           wants_space="N")
         except IndexError:
-            self.print_error("Cannot create user without person type")
+            self.print_error("\nCannot create user without person type")
             return 0
-        self.print_success("People loaded successfully")
+        self.print_success("\nPeople loaded successfully")
 
     def get_roomname(self, rooms):
         all_room_names = []
@@ -319,7 +333,7 @@ class Amity(object):
             if person_object in room.occupants:
                 return room
             else:
-                return "Person not allocated, check in unallocated lists"
+                return "\nPerson not allocated, check in unallocated lists"
 
     def print_success(self, text):
         cprint(text, 'green')
