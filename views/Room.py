@@ -23,7 +23,6 @@ class LivingSpace(Rooms):
 
 class Office(Rooms):
     room_capacity = 6
-    occupants = []
 
     def __init__(self, room_name):
         super(Office, self).__init__(room_name)
