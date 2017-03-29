@@ -53,7 +53,6 @@ class Amity(object):
             try:
                 if person_type == "FELLOW" and wants_space == "Y":
                     allocated_room = random.choice(self.get_listoflspaces())
-                    print allocated_room
                     fellow = Fellow(first_name, last_name)
                     if not self.check_if_fellow_exists(fellow):
                         return
@@ -139,21 +138,21 @@ class Amity(object):
             return True
 
     def allocate_person(self, first_name, last_name, person_type, room_type):
+        try:
+            if room_type == "Office":
 
-        if room_type == "Office":
-            try:
                 random_room = random.choice(self.get_listofoffices())
                 if person_type == "FELLOW":
                     person_obj = self.get_fellowobject(first_name, last_name)
                     random_room.occupants.append(person_obj)
-                    self.print_success("{0} {1} was allocated to {2}".format(
+                    self.print_success("{0} {1} was allocated to {2}\n".format(
                         person_obj.first_name, person_obj.last_name,
                         random_room.room_name))
                     return 1
                 elif person_type == "STAFF":
                     person_obj = self.get_staffobject(first_name, last_name)
                     random_room.occupants.append(person_obj)
-                    self.print_success("{0} {1} was allocated to {2}".format(
+                    self.print_success("{0} {1} was allocated to {2}\n".format(
                         person_obj.first_name, person_obj.last_name,
                         random_room.room_name))
                     return 1
@@ -163,10 +162,22 @@ class Amity(object):
                     Please try reallocating".format(
                         first_name, last_name))
                     return -1
-            except IndexError:
-                self.print_error("You need to create rooms")
-                person_obj = self.get_staffobject(first_name, last_name)
-                self.unallocated_persons.append(person_obj)
+            if room_type == "LivingSpace":
+                allocated_room = random.choice(self.get_listoflspaces())
+                fellow = self.get_fellowobject(first_name, last_name)
+                allocated_room.occupants.append(fellow)
+                self.print_success(
+                    "{0} {1} has been allocated to {2}".format(
+                        fellow.first_name,
+                        fellow.last_name,
+                        allocated_room.room_name))
+                self.unallocated_persons.remove(person_obj)
+                return 1
+
+        except IndexError:
+            self.print_error("You need to create rooms")
+            person_obj = self.get_staffobject(first_name, last_name)
+            self.unallocated_persons.append(person_obj)
 
     def deallocate_fellow(self, person_object, room_object):
         if room_object in self.rooms["LivingSpace"]:
@@ -184,7 +195,6 @@ class Amity(object):
                 if person_type == "FELLOW":
                     self.deallocate_fellow(target, assigned)
                     new_room = self.get_roomobject(room_name)
-                    print new_room
                     new_room.occupants.append(target)
                     self.print_success("{0} {1} was reallocated to {2}".format(
                         target.first_name, target.last_name,
@@ -198,31 +208,40 @@ class Amity(object):
 
     def print_rooms(self):
         room_names_list = []
-        rooms = self.get_listoflspaces()
-        o_rooms = self.get_listofoffices()
-        for room in rooms:
-            room_names_list.append(room.room_name)
-        for room in o_rooms:
+        for rooms in self.rooms["Office"]:
+            room_names_list.append(rooms.room_name)
+        for room in self.rooms["LivingSpace"]:
             room_names_list.append(room.room_name)
         for room in room_names_list:
             self.print_success(room)
+            print "\n"
+        if not room_names_list:
+            self.print_error("Add rooms to Amity")
 
     def print_allocations(self):
-        print "LivingSpace"
-        for room in self.rooms["LivingSpace"]:
-            print room.room_name
-            if room.occupants:
-                for person in room.occupants:
-                    print person.first_name, person.last_name
-        print "Office"
-        for room in self.rooms["Office"]:
-            print room.room_name
-            if room.occupants:
-                for person in room.occupants:
-                    print person.first_name, person.last_name
+        try:
+            for room in self.rooms["LivingSpace"]:
+                print "\n"
+                if room.occupants:
+                    print "LivingSpace:", room.room_name
+                    print "***************************"
+                    for person in room.occupants:
+                        print person.first_name, person.last_name
+
+            for room in self.rooms["Office"]:
+                print "\n"
+                if room.occupants:
+                    print "Office:", room.room_name
+                    print "***************************"
+                    for person in room.occupants:
+                        print person.first_name, person.last_name
+        except AttributeError:
+            print "\n"
 
     def print_unallocated(self):
         open("unallocated.txt", "w").close()
+        if not self.unallocated_persons:
+            self.print_error("Existing persons have all been allocated")
         for person in self.unallocated_persons:
             self.print_success("{0} {1}".format(
                 person.first_name, person.last_name))
