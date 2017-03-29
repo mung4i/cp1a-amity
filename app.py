@@ -69,7 +69,7 @@ def docopt_cmd(func):
 class AmityInteractive(cmd.Cmd):
     intro = 'Welcome to Amity! An office allocation app.' \
         + ' (type help for a list of commands.)'
-    prompt = '<amity>'
+    prompt = '\n(Amity)'
     """
     Displays an app header after app is launched
     """
@@ -208,4 +208,5 @@ class AmityInteractive(cmd.Cmd):
 
 
 if __name__ == "__main__":
+    print(__doc__)
     AmityInteractive().cmdloop()
