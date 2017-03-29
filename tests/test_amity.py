@@ -39,7 +39,7 @@ class TestAmity(unittest.TestCase):
                       self.amity.get_roomname(self.amity.rooms["Office"]))
 
     def test_create_room_if_room_name_is_string(self):
-        self.amity.create_room('Office', [100])
+        self.amity.create_room('Office', ['100'])
         output = sys.stdout.getvalue().strip()
         self.assertIn("Room name should be a string", output)
 
@@ -95,9 +95,9 @@ class TestAmity(unittest.TestCase):
                 print room
                 self.assertIn(first_name, room.occupants)
 
-    def test_print_rooms(self):
+    def test_print_room(self):
         self.amity.create_room("LivingSpace", ["Python"])
-        self.amity.print_rooms()
+        self.amity.print_room("Python")
         output = sys.stdout.getvalue().strip()
         self.assertIn("Python", output)
 
