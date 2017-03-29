@@ -10,7 +10,7 @@ Usage:
     amity reallocate_person <first_name> <last_name> <room_name>
     amity print_allocations [--o=filename]
     amity print_unallocated [--o=filename]
-    amity print_rooms
+    amity print_room <room_name>
     amity load_people [--o=flename]
     amity save_state <dbname>
     amity load_state <dbname>
@@ -90,8 +90,18 @@ class AmityInteractive(cmd.Cmd):
     def do_create_room(self, arg):
         """Usage: create_room <room_type> <room_names_list>..."""
         new_room_name = arg['<room_names_list>']
-        new_room_type = arg['<room_type>']
-        AmityInteractive.amity.create_room(new_room_type, new_room_name)
+
+        if arg['<room_type>'] in ['Office', 'OFFICE', "O", 'o']:
+            new_room_type = 'Office'
+            AmityInteractive.amity.create_room(new_room_type, new_room_name)
+        elif arg['<room_type>'] in ['LivingSpace', 'LIVINGSPACE',
+                                    'L', 'l', 'lspace', 'livingspace']:
+            new_room_type = "LivingSpace"
+            AmityInteractive.amity.create_room(new_room_type, new_room_name)
+        else:
+            cprint("\n Room type should be LivingSpace "
+                   "or L or lspace if livingspace."
+                   "If office it should be Office or O.", "red")
 
     @docopt_cmd
     def do_add_person(self, arg):
@@ -99,29 +109,33 @@ class AmityInteractive(cmd.Cmd):
         [<wants_space>]"""
         new_person_fname = arg['<person_fname>']
         new_person_lname = arg['<person_lname>']
-        person_type = arg['<person_type>']
+
         wants_space = arg['<wants_space>']
 
         if arg['<person_type>'].upper() in ['FELLOW', 'F']:
+            person_type = 'FELLOW'
             if arg['<wants_space>']:
                 AmityInteractive.amity.add_person_fellow(new_person_fname,
                                                          new_person_lname,
-                                                         person_type.upper(),
+                                                         person_type,
                                                          wants_space.upper())
             else:
                 AmityInteractive.amity.add_person_fellow(new_person_fname,
                                                          new_person_lname,
-                                                         person_type.upper())
+                                                         person_type)
         elif arg['<person_type>'].upper() in ['STAFF', 'S']:
+            person_type = 'STAFF'
             if arg['<wants_space>']:
                 AmityInteractive.amity.add_person_staff(new_person_fname,
                                                         new_person_lname,
-                                                        person_type.upper(),
+                                                        person_type,
                                                         wants_space.upper())
             else:
                 AmityInteractive.amity.add_person_staff(new_person_fname,
                                                         new_person_lname,
-                                                        person_type.upper())
+                                                        person_type)
+        else:
+            cprint("\n Person type should be STAFF or FELLOW", "red")
 
     @docopt_cmd
     def do_allocate_person(self, arg):
@@ -162,10 +176,11 @@ class AmityInteractive(cmd.Cmd):
         AmityInteractive.amity.print_unallocated()
 
     @docopt_cmd
-    def do_print_rooms(self, arg):
-        """Usage: print_rooms """
+    def do_print_room(self, arg):
+        """Usage: print_room <room_name>"""
+        room_name = arg['<room_name>']
 
-        AmityInteractive.amity.print_rooms()
+        AmityInteractive.amity.print_room(room_name)
 
     @docopt_cmd
     def do_load_people(self, arg):
