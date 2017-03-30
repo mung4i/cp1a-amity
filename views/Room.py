@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-class Rooms(object):
+class Room(object):
     room_capacity = None
 
     def __init__(self, room_name):
@@ -14,14 +14,14 @@ class Rooms(object):
         return self.room_name
 
 
-class LivingSpace(Rooms):
+class LivingSpace(Room):
     room_capacity = 4
 
     def __init__(self, room_name):
         super(LivingSpace, self).__init__(room_name)
 
 
-class Office(Rooms):
+class Office(Room):
     room_capacity = 6
 
     def __init__(self, room_name):
