@@ -104,6 +104,7 @@ class TestAmity(unittest.TestCase):
                 self.assertIn(first_name, room.occupants)
 
     def test_print_room(self):
+        self.amity.rooms["LivingSpace"] = []
         self.amity.create_room("LivingSpace", ["Python"])
         self.amity.print_room("Python")
         output = sys.stdout.getvalue().strip()
