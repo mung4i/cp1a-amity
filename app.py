@@ -3,7 +3,7 @@
 Usage:
     amity (-i | --interactive)
     amity (-h | --help | --version)
-    amity create_room <room_type> <room_names_list>...
+    amity create_room <room_type> <room_names>...
     amity add_person <first_name> <last_name> <person_type> [<wants_space>]
     amity allocate_person <person_fname> <person_lname> <person_type> \
     <room_type>
@@ -88,8 +88,8 @@ class AmityInteractive(cmd.Cmd):
 
     @docopt_cmd
     def do_create_room(self, arg):
-        """Usage: create_room <room_type> <room_names_list>..."""
-        new_room_name = arg['<room_names_list>']
+        """Usage: create_room <room_type> <room_names>..."""
+        new_room_name = arg['<room_names>']
 
         if arg['<room_type>'] in ['Office', 'OFFICE', "O", 'o']:
             new_room_type = 'Office'
@@ -143,11 +143,17 @@ class AmityInteractive(cmd.Cmd):
         <room_type>"""
         person_fname = arg['<person_fname>']
         person_lname = arg['<person_lname>']
-        person_type = arg['<person_type>']
         room_type = arg['<room_type>']
 
-        AmityInteractive.amity.allocate_person(
-            person_fname, person_lname, person_type.upper(), room_type)
+        if arg['<person_type>'].upper() in ['FELLOW', 'F']:
+            person_type = 'FELLOW'
+            AmityInteractive.amity.allocate_person(
+                person_fname, person_lname, person_type, room_type)
+
+        if arg['<person_type>'].upper() in ['STAFF', 'S']:
+            person_type = 'STAFF'
+            AmityInteractive.amity.allocate_person(
+                person_fname, person_lname, person_type, room_type)
 
     @docopt_cmd
     def do_reallocate_person(self, arg):
@@ -157,11 +163,18 @@ class AmityInteractive(cmd.Cmd):
         person_lname = arg['<person_lname>']
         person_type = arg['<person_type>']
         room_name = arg['<room_name>']
-
-        AmityInteractive.amity.reallocate_person(person_fname,
-                                                 person_lname,
-                                                 person_type.upper(),
-                                                 room_name)
+        if arg['<person_type>'].upper() in ['FELLOW', 'F']:
+            person_type = 'FELLOW'
+            AmityInteractive.amity.reallocate_person(person_fname,
+                                                     person_lname,
+                                                     person_type,
+                                                     room_name)
+        if arg['<person_type>'].upper() in ['STAFF', 'S']:
+            person_type = 'STAFF'
+            AmityInteractive.amity.reallocate_person(person_fname,
+                                                     person_lname,
+                                                     person_type,
+                                                     room_name)
 
     @docopt_cmd
     def do_print_allocations(self, arg):
